@@ -1,0 +1,364 @@
+"use client";
+
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Separator } from '@/components/ui/separator';
+import {
+  Plus,
+  Minus,
+  Undo2,
+  Redo2,
+  Play,
+  Pause,
+  TimerReset,
+  Trophy,
+  Swords,
+  RotateCcw,
+} from 'lucide-react';
+import { useHistory } from '@/hooks/use-history';
+import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+
+type SetScore = { teamAScore: number; teamBScore: number; winner?: 'A' | 'B' };
+
+type MatchState = {
+  teamAName: string;
+  teamBName: string;
+  teamAScore: number;
+  teamBScore: number;
+  currentSet: number;
+  sets: SetScore[];
+};
+
+const initialMatchState: MatchState = {
+  teamAName: 'Home',
+  teamBName: 'Away',
+  teamAScore: 0,
+  teamBScore: 0,
+  currentSet: 1,
+  sets: [],
+};
+
+const SETS_TO_WIN = 3;
+
+const formatTime = (timeInSeconds: number) => {
+  const minutes = Math.floor(timeInSeconds / 60)
+    .toString()
+    .padStart(2, '0');
+  const seconds = (timeInSeconds % 60).toString().padStart(2, '0');
+  return `${minutes}:${seconds}`;
+};
+
+export default function VolleyCounter() {
+  const {
+    state,
+    set: setMatchState,
+    undo,
+    redo,
+    reset: resetHistory,
+    canUndo,
+    canRedo,
+  } = useHistory(initialMatchState);
+  const [seconds, setSeconds] = useState(0);
+  const [isTimerActive, setIsTimerActive] = useState(false);
+  const [animatedScore, setAnimatedScore] = useState<'A' | 'B' | null>(null);
+  const { toast } = useToast();
+
+  const { teamAWinsSet, teamBWinsSet, isSetOver } = useMemo(() => {
+    const { teamAScore, teamBScore, currentSet } = state;
+    const pointsToWin = currentSet === 5 ? 15 : 25;
+    const teamAWins =
+      teamAScore >= pointsToWin && teamAScore >= teamBScore + 2;
+    const teamBWins =
+      teamBScore >= pointsToWin && teamBScore >= teamAScore + 2;
+    return { teamAWinsSet: teamAWins, teamBWinsSet: teamBWins, isSetOver: teamAWins || teamBWins };
+  }, [state]);
+
+  const { teamASetsWon, teamBSetsWon, isMatchOver, winner } = useMemo(() => {
+    const teamASets = state.sets.filter(s => s.winner === 'A').length;
+    const teamBSets = state.sets.filter(s => s.winner === 'B').length;
+    const matchWinner = teamASets === SETS_TO_WIN ? 'A' : teamBSets === SETS_TO_WIN ? 'B' : null;
+    return {
+        teamASetsWon: teamASets,
+        teamBSetsWon: teamBSets,
+        isMatchOver: !!matchWinner,
+        winner: matchWinner
+    };
+  }, [state.sets]);
+
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+    if (isTimerActive && !isMatchOver) {
+      interval = setInterval(() => {
+        setSeconds((s) => s + 1);
+      }, 1000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isTimerActive, isMatchOver]);
+  
+  const handleScoreChange = (team: 'A' | 'B', delta: number) => {
+    if (isMatchOver || isSetOver) return;
+
+    setMatchState((prev) => {
+      const currentScore = team === 'A' ? prev.teamAScore : prev.teamBScore;
+      if (currentScore + delta < 0) return prev;
+      return {
+        ...prev,
+        [team === 'A' ? 'teamAScore' : 'teamBScore']: currentScore + delta,
+      };
+    });
+
+    setAnimatedScore(team);
+    setTimeout(() => setAnimatedScore(null), 300);
+  };
+
+  const handleNameChange = (team: 'A' | 'B', name: string) => {
+    setMatchState((prev) => ({
+      ...prev,
+      [team === 'A' ? 'teamAName' : 'teamBName']: name,
+    }));
+  };
+
+  const handleFinishSet = () => {
+    if (!isSetOver) return;
+
+    setMatchState(prev => {
+        const newSet = { teamAScore: prev.teamAScore, teamBScore: prev.teamBScore, winner: teamAWinsSet ? 'A' : 'B' as 'A' | 'B' };
+        const newSets = [...prev.sets, newSet];
+        
+        return {
+            ...prev,
+            sets: newSets,
+            currentSet: prev.currentSet + 1,
+            teamAScore: 0,
+            teamBScore: 0,
+        }
+    });
+
+    toast({
+        title: `Set ${state.currentSet} Complete!`,
+        description: `${teamAWinsSet ? state.teamAName : state.teamBName} wins the set.`,
+      });
+  }
+
+  const resetMatch = () => {
+    resetHistory(initialMatchState);
+    setSeconds(0);
+    setIsTimerActive(false);
+    toast({
+      title: 'Match Reset',
+      description: 'The scoreboard has been cleared.',
+    });
+  };
+
+  const ScoreDisplay = ({ team }: { team: 'A' | 'B' }) => {
+    const score = team === 'A' ? state.teamAScore : state.teamBScore;
+    const name = team === 'A' ? state.teamAName : state.teamBName;
+    const setsWon = team === 'A' ? teamASetsWon : teamBSetsWon;
+
+    return (
+      <Card className="flex flex-col text-center w-full shadow-lg overflow-hidden">
+        <CardHeader className="p-4">
+          <Input
+            value={name}
+            onChange={(e) => handleNameChange(team, e.target.value)}
+            className="text-xl md:text-2xl font-semibold text-center border-0 focus-visible:ring-1 focus-visible:ring-offset-0 bg-transparent"
+            aria-label={`Team ${team} Name`}
+            disabled={isMatchOver}
+          />
+           <p className="text-muted-foreground">Sets Won: {setsWon}</p>
+        </CardHeader>
+        <CardContent className="flex-grow flex flex-col items-center justify-center p-4">
+          <div
+            className={cn(
+              'text-8xl md:text-9xl font-black font-headline transition-all duration-300 ease-out',
+              animatedScore === team && 'scale-110 text-primary'
+            )}
+          >
+            {score}
+          </div>
+        </CardContent>
+        <CardFooter className="p-4 bg-muted/50 grid grid-cols-2 gap-2">
+          <Button
+            size="lg"
+            onClick={() => handleScoreChange(team, 1)}
+            disabled={isMatchOver || isSetOver}
+            aria-label={`Add point to ${name}`}
+          >
+            <Plus className="h-6 w-6" />
+          </Button>
+          <Button
+            size="lg"
+            variant="secondary"
+            onClick={() => handleScoreChange(team, -1)}
+            disabled={isMatchOver || isSetOver}
+            aria-label={`Remove point from ${name}`}
+          >
+            <Minus className="h-6 w-6" />
+          </Button>
+        </CardFooter>
+      </Card>
+    );
+  };
+  
+  if (isMatchOver) {
+    return (
+        <div className="w-full max-w-4xl mx-auto flex flex-col items-center gap-8">
+            <Card className="w-full text-center p-8 shadow-2xl animate-in fade-in zoom-in-95">
+                <CardHeader>
+                    <CardTitle className="text-4xl font-black text-primary">Match Over!</CardTitle>
+                </CardHeader>
+                <CardContent className="flex flex-col items-center gap-4">
+                    <Trophy className="w-24 h-24 text-primary" />
+                    <p className="text-2xl font-bold">
+                        {winner === 'A' ? state.teamAName : state.teamBName} wins the match!
+                    </p>
+                    <p className="text-lg text-muted-foreground">
+                        Final score: {teamASetsWon} - {teamBSetsWon}
+                    </p>
+                </CardContent>
+                <CardFooter className="justify-center">
+                     <Button onClick={resetMatch} size="lg">
+                        <RotateCcw className="mr-2 h-5 w-5" /> New Match
+                    </Button>
+                </CardFooter>
+            </Card>
+        </div>
+    )
+  }
+
+  return (
+    <div className="w-full max-w-5xl mx-auto flex flex-col gap-6">
+      <header className="text-center">
+        <h1 className="text-4xl md:text-5xl font-black font-headline text-primary/90 flex items-center justify-center gap-3">
+          <Swords className="h-10 w-10" />
+          VolleyCounter
+        </h1>
+        <p className="text-muted-foreground mt-1">
+          A simple and beautiful volleyball scoreboard
+        </p>
+      </header>
+
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] items-center gap-4 md:gap-8">
+        <ScoreDisplay team="A" />
+        <div className="text-center font-bold text-muted-foreground text-xl">
+          <div className="uppercase tracking-widest">Set</div>
+          <div className="text-5xl font-black text-foreground">{state.currentSet}</div>
+        </div>
+        <ScoreDisplay team="B" />
+      </div>
+
+      {isSetOver && (
+        <Card className="p-4 text-center bg-primary/10 border-primary shadow-lg animate-in fade-in-50">
+          <CardContent className="p-0 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <p className="font-bold text-lg text-primary-foreground bg-primary rounded-full px-4 py-1">Set Point!</p>
+            <p className="text-primary font-semibold">{teamAWinsSet ? state.teamAName : state.teamBName} has won the set.</p>
+            <Button onClick={handleFinishSet}>
+                Start Next Set
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
+      <Card className="shadow-lg">
+        <CardContent className="p-4 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="font-mono text-3xl font-bold" aria-label="Match Timer">{formatTime(seconds)}</div>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsTimerActive(!isTimerActive)}
+              aria-label={isTimerActive ? 'Pause timer' : 'Start timer'}
+            >
+              {isTimerActive ? (
+                <Pause className="h-6 w-6" />
+              ) : (
+                <Play className="h-6 w-6" />
+              )}
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setSeconds(0)}
+              aria-label="Reset timer"
+            >
+              <TimerReset className="h-6 w-6" />
+            </Button>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button onClick={undo} disabled={!canUndo}>
+              <Undo2 className="h-4 w-4 mr-2" /> Undo
+            </Button>
+            <Button onClick={redo} disabled={!canRedo}>
+              <Redo2 className="h-4 w-4 mr-2" /> Redo
+            </Button>
+             <AlertDialog>
+                <AlertDialogTrigger asChild>
+                    <Button variant="destructive">
+                        <RotateCcw className="mr-2 h-4 w-4" /> Reset
+                    </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        This will reset the entire match, including all scores, team names, and the timer. This action cannot be undone.
+                    </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={resetMatch}>Confirm Reset</AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        </CardContent>
+      </Card>
+      
+      {state.sets.length > 0 && (
+        <Card className="shadow-lg">
+          <CardHeader>
+            <CardTitle>Set History</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {state.sets.map((set, index) => (
+                <div key={index} className="flex justify-between items-center p-2 rounded-md bg-muted/50">
+                    <div className="font-semibold">Set {index + 1}</div>
+                    <div className="flex items-center gap-2 text-lg">
+                        <span className={cn("font-bold", set.winner === 'A' && "text-primary")}>{set.teamAScore}</span>
+                        <span className="text-muted-foreground">-</span>
+                        <span className={cn("font-bold", set.winner === 'B' && "text-primary")}>{set.teamBScore}</span>
+                    </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+}
