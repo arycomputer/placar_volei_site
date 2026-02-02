@@ -51,8 +51,8 @@ type MatchState = {
 };
 
 const initialMatchState: MatchState = {
-  teamAName: 'Home',
-  teamBName: 'Away',
+  teamAName: 'Casa',
+  teamBName: 'Visitante',
   teamAScore: 0,
   teamBScore: 0,
   currentSet: 1,
@@ -159,8 +159,8 @@ export default function VolleyCounter() {
     });
 
     toast({
-        title: `Set ${state.currentSet} Complete!`,
-        description: `${teamAWinsSet ? state.teamAName : state.teamBName} wins the set.`,
+        title: `Set ${state.currentSet} Finalizado!`,
+        description: `${teamAWinsSet ? state.teamAName : state.teamBName} venceu o set.`,
       });
   }
 
@@ -169,8 +169,8 @@ export default function VolleyCounter() {
     setSeconds(0);
     setIsTimerActive(false);
     toast({
-      title: 'Match Reset',
-      description: 'The scoreboard has been cleared.',
+      title: 'Partida Resetada',
+      description: 'O placar foi limpo.',
     });
   };
 
@@ -186,10 +186,10 @@ export default function VolleyCounter() {
             value={name}
             onChange={(e) => handleNameChange(team, e.target.value)}
             className="text-xl md:text-2xl font-semibold text-center border-0 focus-visible:ring-1 focus-visible:ring-offset-0 bg-transparent"
-            aria-label={`Team ${team} Name`}
+            aria-label={`Nome do Time ${team}`}
             disabled={isMatchOver}
           />
-           <p className="text-muted-foreground">Sets Won: {setsWon}</p>
+           <p className="text-muted-foreground">Sets Ganhos: {setsWon}</p>
         </CardHeader>
         <CardContent className="flex-grow flex flex-col items-center justify-center p-4">
           <div
@@ -206,7 +206,7 @@ export default function VolleyCounter() {
             size="lg"
             onClick={() => handleScoreChange(team, 1)}
             disabled={isMatchOver || isSetOver}
-            aria-label={`Add point to ${name}`}
+            aria-label={`Adicionar ponto para ${name}`}
           >
             <Plus className="h-6 w-6" />
           </Button>
@@ -215,7 +215,7 @@ export default function VolleyCounter() {
             variant="secondary"
             onClick={() => handleScoreChange(team, -1)}
             disabled={isMatchOver || isSetOver}
-            aria-label={`Remove point from ${name}`}
+            aria-label={`Remover ponto de ${name}`}
           >
             <Minus className="h-6 w-6" />
           </Button>
@@ -229,20 +229,20 @@ export default function VolleyCounter() {
         <div className="w-full max-w-4xl mx-auto flex flex-col items-center gap-8">
             <Card className="w-full text-center p-8 shadow-2xl animate-in fade-in zoom-in-95">
                 <CardHeader>
-                    <CardTitle className="text-4xl font-black text-primary">Match Over!</CardTitle>
+                    <CardTitle className="text-4xl font-black text-primary">Fim de Jogo!</CardTitle>
                 </CardHeader>
                 <CardContent className="flex flex-col items-center gap-4">
                     <Trophy className="w-24 h-24 text-primary" />
                     <p className="text-2xl font-bold">
-                        {winner === 'A' ? state.teamAName : state.teamBName} wins the match!
+                        {winner === 'A' ? state.teamAName : state.teamBName} venceu a partida!
                     </p>
                     <p className="text-lg text-muted-foreground">
-                        Final score: {teamASetsWon} - {teamBSetsWon}
+                        Placar final: {teamASetsWon} - {teamBSetsWon}
                     </p>
                 </CardContent>
                 <CardFooter className="justify-center">
                      <Button onClick={resetMatch} size="lg">
-                        <RotateCcw className="mr-2 h-5 w-5" /> New Match
+                        <RotateCcw className="mr-2 h-5 w-5" /> Nova Partida
                     </Button>
                 </CardFooter>
             </Card>
@@ -265,9 +265,9 @@ export default function VolleyCounter() {
         <Card className="p-4 text-center bg-primary/10 border-primary shadow-lg animate-in fade-in-50">
           <CardContent className="p-0 flex flex-col sm:flex-row items-center justify-center gap-4">
             <p className="font-bold text-lg text-primary-foreground bg-primary rounded-full px-4 py-1">Set Point!</p>
-            <p className="text-primary font-semibold">{teamAWinsSet ? state.teamAName : state.teamBName} has won the set.</p>
+            <p className="text-primary font-semibold">{teamAWinsSet ? state.teamAName : state.teamBName} venceu o set.</p>
             <Button onClick={handleFinishSet}>
-                Start Next Set
+                Iniciar Próximo Set
             </Button>
           </CardContent>
         </Card>
@@ -276,12 +276,12 @@ export default function VolleyCounter() {
       <Card className="shadow-lg">
         <CardContent className="p-4 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="font-mono text-3xl font-bold" aria-label="Match Timer">{formatTime(seconds)}</div>
+            <div className="font-mono text-3xl font-bold" aria-label="Cronômetro da Partida">{formatTime(seconds)}</div>
             <Button
               variant="ghost"
               size="icon"
               onClick={() => setIsTimerActive(!isTimerActive)}
-              aria-label={isTimerActive ? 'Pause timer' : 'Start timer'}
+              aria-label={isTimerActive ? 'Pausar cronômetro' : 'Iniciar cronômetro'}
             >
               {isTimerActive ? (
                 <Pause className="h-6 w-6" />
@@ -293,34 +293,34 @@ export default function VolleyCounter() {
               variant="ghost"
               size="icon"
               onClick={() => setSeconds(0)}
-              aria-label="Reset timer"
+              aria-label="Resetar cronômetro"
             >
               <TimerReset className="h-6 w-6" />
             </Button>
           </div>
           <div className="flex items-center gap-2">
             <Button onClick={undo} disabled={!canUndo}>
-              <Undo2 className="h-4 w-4 mr-2" /> Undo
+              <Undo2 className="h-4 w-4 mr-2" /> Desfazer
             </Button>
             <Button onClick={redo} disabled={!canRedo}>
-              <Redo2 className="h-4 w-4 mr-2" /> Redo
+              <Redo2 className="h-4 w-4 mr-2" /> Refazer
             </Button>
              <AlertDialog>
                 <AlertDialogTrigger asChild>
                     <Button variant="destructive">
-                        <RotateCcw className="mr-2 h-4 w-4" /> Reset
+                        <RotateCcw className="mr-2 h-4 w-4" /> Resetar
                     </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                    <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
                     <AlertDialogDescription>
-                        This will reset the entire match, including all scores, team names, and the timer. This action cannot be undone.
+                        Isso irá resetar a partida inteira, incluindo todos os placares, nomes dos times e o cronômetro. Esta ação não pode ser desfeita.
                     </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={resetMatch}>Confirm Reset</AlertDialogAction>
+                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                    <AlertDialogAction onClick={resetMatch}>Confirmar Reset</AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
@@ -331,7 +331,7 @@ export default function VolleyCounter() {
       {state.sets.length > 0 && (
         <Card className="shadow-lg">
           <CardHeader>
-            <CardTitle>Set History</CardTitle>
+            <CardTitle>Histórico de Sets</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">

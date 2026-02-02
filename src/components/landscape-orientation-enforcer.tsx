@@ -29,8 +29,8 @@ export default function LandscapeOrientationEnforcer({ children }: { children: R
         return (
             <div className="fixed inset-0 z-[101] flex h-screen w-screen flex-col items-center justify-center bg-background text-center text-foreground p-4">
                 <Smartphone className="h-16 w-16 mb-4 animate-pulse" />
-                <h1 className="text-2xl font-bold">Please Rotate Your Device</h1>
-                <p className="mt-2 text-muted-foreground">This application is best viewed in landscape mode.</p>
+                <h1 className="text-2xl font-bold">Por Favor, Gire Seu Dispositivo</h1>
+                <p className="mt-2 text-muted-foreground">Esta aplicação é melhor visualizada no modo paisagem.</p>
             </div>
         );
     }
