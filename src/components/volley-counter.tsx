@@ -254,9 +254,9 @@ export default function VolleyCounter() {
 
   return (
     <div className="w-full max-w-5xl mx-auto flex flex-col gap-6">
-      <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] items-start gap-4 md:gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-[45%_1fr_45%] items-start gap-4 md:gap-8">
         <ScoreDisplay team="A" />
-
+        
         <div className="flex flex-col gap-4 items-center justify-start h-full">
             <div className="text-center font-bold text-muted-foreground text-xl">
                 <div className="uppercase tracking-widest">Set</div>
