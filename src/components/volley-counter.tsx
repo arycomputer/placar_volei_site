@@ -180,13 +180,13 @@ export default function VolleyCounter() {
     const setsWon = team === 'A' ? teamASetsWon : teamBSetsWon;
 
     return (
-      <Card className="flex flex-col text-center w-full shadow-lg overflow-hidden">
+      <Card className="flex flex-col w-full shadow-lg overflow-hidden">
         <CardHeader className="p-4">
-            <div className="flex items-baseline justify-center gap-2">
+            <div className="flex items-baseline justify-between gap-2">
                 <Input
                     value={name}
                     onChange={(e) => handleNameChange(team, e.target.value)}
-                    className="w-auto text-xl md:text-2xl font-semibold text-center border-0 focus-visible:ring-1 focus-visible:ring-offset-0 bg-transparent p-0 h-auto"
+                    className="flex-grow text-xl md:text-2xl font-semibold text-left border-0 focus-visible:ring-1 focus-visible:ring-offset-0 bg-transparent p-0 h-auto"
                     aria-label={`Nome do Time ${team}`}
                     disabled={isMatchOver}
                 />
