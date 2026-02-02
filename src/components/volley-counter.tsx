@@ -254,10 +254,10 @@ export default function VolleyCounter() {
 
   return (
     <div className="w-full max-w-6xl mx-auto flex flex-col gap-4 md:gap-6">
-      <div className="grid grid-cols-1 md:grid-cols-3 items-start gap-4 md:gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-[9fr_2fr_9fr] items-start gap-4 md:gap-8">
         <ScoreDisplay team="A" />
         
-        <div className="flex flex-col gap-4 items-center justify-start h-full">
+        <div className="flex flex-col gap-4 items-center justify-start h-full w-full order-first md:order-none">
             <div className="text-center font-bold text-muted-foreground text-xl">
                 <div className="uppercase tracking-widest">Set</div>
                 <div className="text-5xl font-black text-foreground">{state.currentSet}</div>
