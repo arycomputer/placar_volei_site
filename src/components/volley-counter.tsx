@@ -182,14 +182,16 @@ export default function VolleyCounter() {
     return (
       <Card className="flex flex-col text-center w-full shadow-lg overflow-hidden">
         <CardHeader className="p-4">
-          <Input
-            value={name}
-            onChange={(e) => handleNameChange(team, e.target.value)}
-            className="text-xl md:text-2xl font-semibold text-center border-0 focus-visible:ring-1 focus-visible:ring-offset-0 bg-transparent"
-            aria-label={`Nome do Time ${team}`}
-            disabled={isMatchOver}
-          />
-           <p className="text-muted-foreground">Sets Ganhos: {setsWon}</p>
+            <div className="flex items-baseline justify-center gap-2">
+                <Input
+                    value={name}
+                    onChange={(e) => handleNameChange(team, e.target.value)}
+                    className="w-auto text-xl md:text-2xl font-semibold text-center border-0 focus-visible:ring-1 focus-visible:ring-offset-0 bg-transparent p-0 h-auto"
+                    aria-label={`Nome do Time ${team}`}
+                    disabled={isMatchOver}
+                />
+                <p className="text-muted-foreground text-sm font-normal whitespace-nowrap">Sets: {setsWon}</p>
+            </div>
         </CardHeader>
         <CardContent className="flex-grow flex flex-col items-center justify-center p-4">
           <div
