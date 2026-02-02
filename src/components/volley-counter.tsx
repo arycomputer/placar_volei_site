@@ -252,16 +252,6 @@ export default function VolleyCounter() {
 
   return (
     <div className="w-full max-w-5xl mx-auto flex flex-col gap-6">
-      <header className="text-center">
-        <h1 className="text-4xl md:text-5xl font-black font-headline text-primary/90 flex items-center justify-center gap-3">
-          <Swords className="h-10 w-10" />
-          VolleyCounter
-        </h1>
-        <p className="text-muted-foreground mt-1">
-          A simple and beautiful volleyball scoreboard
-        </p>
-      </header>
-
       <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] items-center gap-4 md:gap-8">
         <ScoreDisplay team="A" />
         <div className="text-center font-bold text-muted-foreground text-xl">
