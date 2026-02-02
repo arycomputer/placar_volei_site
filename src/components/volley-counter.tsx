@@ -274,9 +274,9 @@ export default function VolleyCounter() {
                         aria-label={isTimerActive ? 'Pausar cronômetro' : 'Iniciar cronômetro'}
                         >
                         {isTimerActive ? (
-                            <Pause className="h-5 w-5" />
+                            <Pause />
                         ) : (
-                            <Play className="h-5 w-5" />
+                            <Play />
                         )}
                         </Button>
                         <Button
@@ -285,24 +285,20 @@ export default function VolleyCounter() {
                         onClick={() => setSeconds(0)}
                         aria-label="Resetar cronômetro"
                         >
-                        <TimerReset className="h-5 w-5" />
+                        <TimerReset />
                         </Button>
                     </div>
-                    <div className="flex flex-col items-center gap-2 w-full">
-                        <div className="flex gap-2 w-full">
-                            <Button onClick={undo} disabled={!canUndo} className="flex-1">
-                                <Undo2 className="h-4 w-4 md:mr-2" />
-                                <span className="hidden md:inline">Desfazer</span>
-                            </Button>
-                            <Button onClick={redo} disabled={!canRedo} className="flex-1">
-                                <Redo2 className="h-4 w-4 md:mr-2" />
-                                <span className="hidden md:inline">Refazer</span>
-                            </Button>
-                        </div>
+                    <div className="flex items-center justify-center gap-2 w-full">
+                        <Button onClick={undo} disabled={!canUndo} variant="outline" size="icon" aria-label="Desfazer">
+                            <Undo2 />
+                        </Button>
+                        <Button onClick={redo} disabled={!canRedo} variant="outline" size="icon" aria-label="Refazer">
+                            <Redo2 />
+                        </Button>
                         <AlertDialog>
                             <AlertDialogTrigger asChild>
-                                <Button variant="destructive" className="w-full">
-                                    <RotateCcw className="mr-2 h-4 w-4" /> Resetar
+                                <Button variant="destructive" size="icon" aria-label="Resetar Partida">
+                                    <RotateCcw />
                                 </Button>
                             </AlertDialogTrigger>
                             <AlertDialogContent>
