@@ -170,7 +170,7 @@ export default function VolleyCounter() {
     setIsTimerActive(false);
     toast({
       title: 'Partida Resetada',
-      description: 'O placar foi limpo.',
+      description: 'Todos os placares, sets e o cronômetro foram resetados.',
     });
   };
 
