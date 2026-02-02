@@ -208,7 +208,7 @@ export default function VolleyCounter() {
         >
           <div
             className={cn(
-              'font-headline font-black text-8xl transition-all duration-300 ease-out md:text-7xl lg:text-8xl',
+              'font-headline font-black text-7xl transition-all duration-300 ease-out md:text-8xl lg:text-9xl',
               animatedScore === team && 'scale-110 text-primary'
             )}
           >
@@ -248,10 +248,10 @@ export default function VolleyCounter() {
 
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-grow flex-col gap-4 md:gap-6">
-      <div className="grid flex-grow grid-cols-1 items-stretch gap-4 md:grid-cols-[minmax(0,_1fr)_auto_minmax(0,_1fr)] md:gap-8">
+      <div className="grid flex-grow grid-cols-1 items-stretch gap-4 md:grid-cols-[1fr_auto_1fr] md:gap-8">
         <ScoreDisplay team="A" />
         
-        <div className="order-first flex h-full w-full flex-col items-center justify-start gap-4 md:order-none md:w-36">
+        <div className="order-first flex h-full w-full flex-col items-center justify-start gap-4 md:order-none md:w-auto">
             <div className="text-center text-xl font-bold text-muted-foreground">
                 <div className="uppercase tracking-widest">Set</div>
                 <div className="font-black text-5xl text-foreground">{state.currentSet}</div>
