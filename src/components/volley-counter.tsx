@@ -13,15 +13,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import {
-  Plus,
-  Minus,
   Undo2,
   Redo2,
   Play,
   Pause,
   TimerReset,
   Trophy,
-  Swords,
   RotateCcw,
 } from 'lucide-react';
 import { useHistory } from '@/hooks/use-history';
@@ -179,6 +176,15 @@ export default function VolleyCounter() {
     const name = team === 'A' ? state.teamAName : state.teamBName;
     const setsWon = team === 'A' ? teamASetsWon : teamBSetsWon;
 
+    const handleContainerClick = () => {
+        handleScoreChange(team, 1)
+    }
+    
+    const handleContainerContextMenu = (e: React.MouseEvent) => {
+        e.preventDefault();
+        handleScoreChange(team, -1);
+    }
+
     return (
       <Card className="flex flex-col w-full shadow-lg overflow-hidden">
         <CardHeader className="p-4">
@@ -193,7 +199,13 @@ export default function VolleyCounter() {
                 <p className="text-muted-foreground text-sm font-normal whitespace-nowrap">Sets: {setsWon}</p>
             </div>
         </CardHeader>
-        <CardContent className="flex-grow flex flex-col items-center justify-center p-4">
+        <CardContent 
+            className="flex-grow flex flex-col items-center justify-center p-4 cursor-pointer"
+            onClick={handleContainerClick}
+            onContextMenu={handleContainerContextMenu}
+            role="button"
+            aria-label={`Placar para ${name}. Toque para adicionar ponto, segure ou clique com o botão direito para remover.`}
+        >
           <div
             className={cn(
               'font-black font-headline transition-all duration-300 ease-out text-8xl md:text-7xl lg:text-8xl',
@@ -202,26 +214,8 @@ export default function VolleyCounter() {
           >
             {score}
           </div>
+          <p className="text-muted-foreground text-xs mt-2 select-none">Toque para adicionar, segure para remover</p>
         </CardContent>
-        <CardFooter className="p-4 bg-muted/50 grid grid-cols-2 gap-2">
-          <Button
-            size="lg"
-            onClick={() => handleScoreChange(team, 1)}
-            disabled={isMatchOver || isSetOver}
-            aria-label={`Adicionar ponto para ${name}`}
-          >
-            <Plus className="h-6 w-6" />
-          </Button>
-          <Button
-            size="lg"
-            variant="secondary"
-            onClick={() => handleScoreChange(team, -1)}
-            disabled={isMatchOver || isSetOver}
-            aria-label={`Remover ponto de ${name}`}
-          >
-            <Minus className="h-6 w-6" />
-          </Button>
-        </CardFooter>
       </Card>
     );
   };
@@ -254,10 +248,10 @@ export default function VolleyCounter() {
 
   return (
     <div className="w-full max-w-6xl mx-auto flex flex-col gap-4 md:gap-6">
-      <div className="grid grid-cols-1 md:grid-cols-[9fr_2fr_9fr] items-start gap-4 md:gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] items-start gap-4 md:gap-8">
         <ScoreDisplay team="A" />
         
-        <div className="flex flex-col gap-4 items-center justify-start h-full w-full order-first md:order-none">
+        <div className="flex flex-col gap-4 items-center justify-start h-full w-full order-first md:order-none md:w-36">
             <div className="text-center font-bold text-muted-foreground text-xl">
                 <div className="uppercase tracking-widest">Set</div>
                 <div className="text-5xl font-black text-foreground">{state.currentSet}</div>
