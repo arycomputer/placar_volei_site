@@ -1,10 +1,11 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
+import LandscapeOrientationEnforcer from '@/components/landscape-orientation-enforcer';
 
 export const metadata: Metadata = {
-  title: 'VolleyCounter',
-  description: 'A simple and beautiful volleyball scoreboard.',
+  title: '',
+  description: '',
 };
 
 export default function RootLayout({
@@ -23,7 +24,9 @@ export default function RootLayout({
         />
       </head>
       <body className="font-body antialiased">
-        {children}
+        <LandscapeOrientationEnforcer>
+          {children}
+        </LandscapeOrientationEnforcer>
         <Toaster />
       </body>
     </html>
