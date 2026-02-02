@@ -186,21 +186,21 @@ export default function VolleyCounter() {
     }
 
     return (
-      <Card className="flex flex-col w-full shadow-lg overflow-hidden">
+      <Card className="flex h-full w-full flex-col overflow-hidden shadow-lg">
         <CardHeader className="p-4">
             <div className="flex items-baseline justify-between gap-2">
                 <Input
                     value={name}
                     onChange={(e) => handleNameChange(team, e.target.value)}
-                    className="flex-grow text-xl md:text-2xl font-semibold text-left border-0 focus-visible:ring-1 focus-visible:ring-offset-0 bg-transparent p-0 h-auto"
+                    className="h-auto flex-grow border-0 bg-transparent p-0 text-left text-xl font-semibold focus-visible:ring-1 focus-visible:ring-offset-0 md:text-2xl"
                     aria-label={`Nome do Time ${team}`}
                     disabled={isMatchOver}
                 />
-                <p className="text-muted-foreground text-sm font-normal whitespace-nowrap">Sets: {setsWon}</p>
+                <p className="whitespace-nowrap text-sm font-normal text-muted-foreground">Sets: {setsWon}</p>
             </div>
         </CardHeader>
         <CardContent 
-            className="flex-grow flex flex-col items-center justify-center p-4 cursor-pointer"
+            className="flex flex-grow cursor-pointer flex-col items-center justify-center p-4"
             onClick={handleContainerClick}
             onContextMenu={handleContainerContextMenu}
             role="button"
@@ -208,13 +208,13 @@ export default function VolleyCounter() {
         >
           <div
             className={cn(
-              'font-black font-headline transition-all duration-300 ease-out text-8xl md:text-7xl lg:text-8xl',
+              'font-headline font-black text-8xl transition-all duration-300 ease-out md:text-7xl lg:text-8xl',
               animatedScore === team && 'scale-110 text-primary'
             )}
           >
             {score}
           </div>
-          <p className="text-muted-foreground text-xs mt-2 select-none">Toque para adicionar, segure para remover</p>
+          <p className="mt-2 select-none text-xs text-muted-foreground">Toque para adicionar, segure para remover</p>
         </CardContent>
       </Card>
     );
@@ -222,13 +222,13 @@ export default function VolleyCounter() {
   
   if (isMatchOver) {
     return (
-        <div className="w-full max-w-4xl mx-auto flex flex-col items-center gap-8">
-            <Card className="w-full text-center p-8 shadow-2xl animate-in fade-in zoom-in-95">
+        <div className="mx-auto flex w-full max-w-4xl flex-col items-center gap-8">
+            <Card className="w-full animate-in fade-in zoom-in-95 p-8 text-center shadow-2xl">
                 <CardHeader>
                     <CardTitle className="text-4xl font-black text-primary">Fim de Jogo!</CardTitle>
                 </CardHeader>
                 <CardContent className="flex flex-col items-center gap-4">
-                    <Trophy className="w-24 h-24 text-primary" />
+                    <Trophy className="h-24 w-24 text-primary" />
                     <p className="text-2xl font-bold">
                         {winner === 'A' ? state.teamAName : state.teamBName} venceu a partida!
                     </p>
@@ -247,19 +247,19 @@ export default function VolleyCounter() {
   }
 
   return (
-    <div className="w-full max-w-6xl mx-auto flex flex-col gap-4 md:gap-6">
-      <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] items-start gap-4 md:gap-8">
+    <div className="mx-auto flex w-full max-w-6xl flex-grow flex-col gap-4 md:gap-6">
+      <div className="grid flex-grow grid-cols-1 items-stretch gap-4 md:grid-cols-[minmax(0,_1fr)_auto_minmax(0,_1fr)] md:gap-8">
         <ScoreDisplay team="A" />
         
-        <div className="flex flex-col gap-4 items-center justify-start h-full w-full order-first md:order-none md:w-36">
-            <div className="text-center font-bold text-muted-foreground text-xl">
+        <div className="order-first flex h-full w-full flex-col items-center justify-start gap-4 md:order-none md:w-36">
+            <div className="text-center text-xl font-bold text-muted-foreground">
                 <div className="uppercase tracking-widest">Set</div>
-                <div className="text-5xl font-black text-foreground">{state.currentSet}</div>
+                <div className="font-black text-5xl text-foreground">{state.currentSet}</div>
             </div>
 
-            <Card className="shadow-lg w-full">
-                <CardContent className="p-4 flex flex-col items-center justify-center gap-4">
-                    <div className="flex items-center gap-2 flex-wrap justify-center">
+            <Card className="w-full shadow-lg">
+                <CardContent className="flex flex-col items-center justify-center gap-4 p-4">
+                    <div className="flex flex-wrap items-center justify-center gap-2">
                         <div className="font-mono text-2xl font-bold" aria-label="Cronômetro da Partida">{formatTime(seconds)}</div>
                         <Button
                         variant="ghost"
@@ -282,7 +282,7 @@ export default function VolleyCounter() {
                         <TimerReset />
                         </Button>
                     </div>
-                    <div className="flex items-center justify-center gap-2 w-full">
+                    <div className="flex w-full items-center justify-center gap-2">
                         <Button onClick={undo} disabled={!canUndo} variant="outline" size="icon" aria-label="Desfazer">
                             <Undo2 />
                         </Button>
@@ -317,10 +317,10 @@ export default function VolleyCounter() {
       </div>
 
       {isSetOver && (
-        <Card className="p-4 text-center bg-primary/10 border-primary shadow-lg animate-in fade-in-50">
-          <CardContent className="p-0 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <p className="font-bold text-lg text-primary-foreground bg-primary rounded-full px-4 py-1">Set Point!</p>
-            <p className="text-primary font-semibold">{teamAWinsSet ? state.teamAName : state.teamBName} venceu o set.</p>
+        <Card className="animate-in fade-in-50 border-primary bg-primary/10 p-4 text-center shadow-lg">
+          <CardContent className="flex flex-col items-center justify-center gap-4 p-0 sm:flex-row">
+            <p className="rounded-full bg-primary px-4 py-1 font-bold text-lg text-primary-foreground">Set Point!</p>
+            <p className="font-semibold text-primary">{teamAWinsSet ? state.teamAName : state.teamBName} venceu o set.</p>
             <Button onClick={handleFinishSet}>
                 Iniciar Próximo Set
             </Button>
@@ -336,7 +336,7 @@ export default function VolleyCounter() {
           <CardContent>
             <div className="space-y-2">
               {state.sets.map((set, index) => (
-                <div key={index} className="flex justify-between items-center p-2 rounded-md bg-muted/50">
+                <div key={index} className="flex items-center justify-between rounded-md bg-muted/50 p-2">
                     <div className="font-semibold">Set {index + 1}</div>
                     <div className="flex items-center gap-2 text-lg">
                         <span className={cn("font-bold", set.winner === 'A' && "text-primary")}>{set.teamAScore}</span>
