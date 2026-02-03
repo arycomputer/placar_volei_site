@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import LandscapeOrientationEnforcer from '@/components/landscape-orientation-enforcer';
+import { SettingsProvider } from '@/contexts/settings-context';
 
 export const metadata: Metadata = {
   title: '',
@@ -24,10 +25,12 @@ export default function RootLayout({
         />
       </head>
       <body className="font-body antialiased">
-        <LandscapeOrientationEnforcer>
-          {children}
-        </LandscapeOrientationEnforcer>
-        <Toaster />
+        <SettingsProvider>
+          <LandscapeOrientationEnforcer>
+            {children}
+          </LandscapeOrientationEnforcer>
+          <Toaster />
+        </SettingsProvider>
       </body>
     </html>
   );

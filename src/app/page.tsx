@@ -1,3 +1,5 @@
+"use client";
+
 import VolleyCounter from '@/components/volley-counter';
 
 export default function Home() {

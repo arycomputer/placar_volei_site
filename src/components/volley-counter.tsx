@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import Link from 'next/link';
 import {
   Card,
   CardContent,
@@ -11,7 +12,6 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Separator } from '@/components/ui/separator';
 import {
   Undo2,
   Redo2,
@@ -20,6 +20,7 @@ import {
   TimerReset,
   Trophy,
   RotateCcw,
+  Settings,
 } from 'lucide-react';
 import { useHistory } from '@/hooks/use-history';
 import { cn } from '@/lib/utils';
@@ -34,7 +35,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
+} from "@/components/ui/alert-dialog";
+import { useSettings } from '@/contexts/settings-context';
 
 type SetScore = { teamAScore: number; teamBScore: number; winner?: 'A' | 'B' };
 
@@ -76,6 +78,8 @@ export default function VolleyCounter() {
     canUndo,
     canRedo,
   } = useHistory(initialMatchState);
+
+  const { settings } = useSettings();
   const [seconds, setSeconds] = useState(0);
   const [isTimerActive, setIsTimerActive] = useState(false);
   const [animatedScore, setAnimatedScore] = useState<'A' | 'B' | null>(null);
@@ -83,13 +87,13 @@ export default function VolleyCounter() {
 
   const { teamAWinsSet, teamBWinsSet, isSetOver } = useMemo(() => {
     const { teamAScore, teamBScore, currentSet } = state;
-    const pointsToWin = currentSet === 5 ? 15 : 25;
+    const pointsToWin = currentSet === (SETS_TO_WIN * 2 - 1) ? settings.tieBreakPoints : settings.pointsToWin;
     const teamAWins =
       teamAScore >= pointsToWin && teamAScore >= teamBScore + 2;
     const teamBWins =
       teamBScore >= pointsToWin && teamBScore >= teamAScore + 2;
     return { teamAWinsSet: teamAWins, teamBWinsSet: teamBWins, isSetOver: teamAWins || teamBWins };
-  }, [state]);
+  }, [state, settings.pointsToWin, settings.tieBreakPoints]);
 
   const { teamASetsWon, teamBSetsWon, isMatchOver, winner } = useMemo(() => {
     const teamASets = state.sets.filter(s => s.winner === 'A').length;
@@ -308,6 +312,11 @@ export default function VolleyCounter() {
                                 </AlertDialogFooter>
                             </AlertDialogContent>
                         </AlertDialog>
+                        <Button asChild variant="outline" size="icon" aria-label="Configurações">
+                            <Link href="/settings">
+                                <Settings />
+                            </Link>
+                        </Button>
                     </div>
                 </CardContent>
             </Card>
