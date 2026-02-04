@@ -242,7 +242,7 @@ export default function VolleyCounter() {
         >
           <div
             className={cn(
-              'select-none font-headline font-black text-9xl leading-[1] transition-all duration-300 ease-out md:text-[12rem] lg:text-[16rem]',
+              'select-none text-[26vw] leading-[1] font-black font-headline transition-all duration-300 ease-out md:text-[16rem] lg:text-[20rem] xl:text-[24rem]',
               team === 'A' ? 'text-team-a-fg' : 'text-team-b-fg',
               animatedScore === team && 'scale-110'
             )}
@@ -296,25 +296,27 @@ export default function VolleyCounter() {
                         <CardTitle className="font-black text-5xl select-none">{state.currentSet}</CardTitle>
                     </CardHeader>
                     <CardContent className="flex flex-col items-center justify-center gap-4 p-4">
-                    <div className="flex flex-wrap items-center justify-center gap-2">
-                        <div className="font-mono text-2xl font-bold select-none" aria-label="Cronômetro da Partida">{formatTime(seconds)}</div>
-                        <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => setIsTimerActive(!isTimerActive)}
-                        aria-label={isTimerActive ? 'Pausar cronômetro' : 'Iniciar cronômetro'}
-                        >
-                        {isTimerActive ? <Pause /> : <Play />}
-                        </Button>
-                        <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => setSeconds(0)}
-                        aria-label="Resetar cronômetro"
-                        >
-                        <TimerReset />
-                        </Button>
-                    </div>
+                        <div className="flex flex-col items-center justify-center gap-2">
+                            <div className="font-mono text-2xl font-bold select-none" aria-label="Cronômetro da Partida">{formatTime(seconds)}</div>
+                            <div className="flex items-center justify-center gap-2">
+                                <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => setIsTimerActive(!isTimerActive)}
+                                aria-label={isTimerActive ? 'Pausar cronômetro' : 'Iniciar cronômetro'}
+                                >
+                                {isTimerActive ? <Pause /> : <Play />}
+                                </Button>
+                                <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => setSeconds(0)}
+                                aria-label="Resetar cronômetro"
+                                >
+                                <TimerReset />
+                                </Button>
+                            </div>
+                        </div>
                     <div className="flex w-full items-center justify-center gap-2">
                         <Button onClick={undo} disabled={!canUndo} variant="outline" size="icon" aria-label="Desfazer">
                         <Undo2 />
@@ -354,8 +356,8 @@ export default function VolleyCounter() {
                                 </Button>
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                <p>Toque no placar para adicionar um ponto.</p>
-                                <p>Segure ou clique direito para remover.</p>
+                                <p className="select-none">Toque no placar para adicionar um ponto.</p>
+                                <p className="select-none">Segure ou clique direito para remover.</p>
                                 </TooltipContent>
                             </Tooltip>
                         </TooltipProvider>
