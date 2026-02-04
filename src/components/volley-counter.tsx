@@ -274,7 +274,7 @@ export default function VolleyCounter() {
                 <ScoreDisplay team="A" />
             </div>
             
-            <div className="order-first flex w-full flex-col md:order-none md:w-[10%]">
+            <div className="order-first flex w-full flex-col md:order-none md:w-[20%]">
                 <Card className="flex h-full w-full flex-col items-stretch text-center shadow-lg">
                     <CardHeader className="p-4">
                         <CardDescription className="uppercase tracking-widest">Set</CardDescription>
