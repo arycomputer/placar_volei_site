@@ -269,18 +269,18 @@ export default function VolleyCounter() {
 
   return (
     <main className="flex min-h-screen flex-col items-stretch">
-        <div className="flex w-full flex-grow flex-col gap-4 p-4 md:flex-row md:gap-6 md:p-8">
-            <div className="flex flex-1 flex-col md:grow-0 md:basis-[45%]">
+        <div className="flex w-full flex-grow flex-col items-stretch gap-4 p-4 md:flex-row md:gap-6 md:p-8">
+            <div className="flex flex-1 flex-col">
                 <ScoreDisplay team="A" />
             </div>
             
-            <div className="order-first flex w-full flex-col md:order-none md:grow-0 md:basis-[10%]">
+            <div className="order-first flex w-full flex-col md:order-none md:w-[10%]">
                 <Card className="flex h-full w-full flex-col items-stretch text-center shadow-lg">
                     <CardHeader className="p-4">
                         <CardDescription className="uppercase tracking-widest">Set</CardDescription>
                         <CardTitle className="font-black text-5xl">{state.currentSet}</CardTitle>
                     </CardHeader>
-                    <CardContent className="flex flex-grow flex-col items-center justify-center gap-4 p-4">
+                    <CardContent className="flex flex-col items-center justify-center gap-4 p-4">
                     <div className="flex flex-wrap items-center justify-center gap-2">
                         <div className="font-mono text-2xl font-bold" aria-label="Cronômetro da Partida">{formatTime(seconds)}</div>
                         <Button
@@ -333,37 +333,33 @@ export default function VolleyCounter() {
                         </Button>
                     </div>
                     </CardContent>
+                     {state.sets.length > 0 && (
+                        <>
+                            <div className="h-[1px] bg-border mx-4" />
+                            <CardHeader className="p-4 pb-2">
+                                <CardTitle>Histórico</CardTitle>
+                            </CardHeader>
+                            <CardContent className="min-h-0 flex-1 space-y-2 overflow-y-auto p-4 pt-0">
+                                {state.sets.map((set, index) => (
+                                    <div key={index} className="flex items-center justify-between rounded-md bg-muted/50 p-2">
+                                        <div className="font-semibold">Set {index + 1}</div>
+                                        <div className="flex items-center gap-2 text-lg">
+                                            <span className={cn("font-bold", set.winner === 'A' ? "text-primary" : "text-chart-1")}>{set.teamAScore}</span>
+                                            <span className="text-muted-foreground">-</span>
+                                            <span className={cn("font-bold", set.winner === 'B' ? "text-primary" : "text-chart-2")}>{set.teamBScore}</span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </CardContent>
+                        </>
+                    )}
                 </Card>
             </div>
             
-            <div className="flex flex-1 flex-col md:grow-0 md:basis-[45%]">
+            <div className="flex flex-1 flex-col">
                 <ScoreDisplay team="B" />
             </div>
         </div>
-        
-        {state.sets.length > 0 && (
-            <div className="px-4 pb-4 md:px-8 md:pb-8">
-                <Card className="shadow-lg">
-                    <CardHeader>
-                        <CardTitle>Histórico de Sets</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="space-y-2">
-                        {state.sets.map((set, index) => (
-                            <div key={index} className="flex items-center justify-between rounded-md bg-muted/50 p-2">
-                                <div className="font-semibold">Set {index + 1}</div>
-                                <div className="flex items-center gap-2 text-lg">
-                                    <span className={cn("font-bold", set.winner === 'A' ? "text-primary" : "text-chart-1")}>{set.teamAScore}</span>
-                                    <span className="text-muted-foreground">-</span>
-                                    <span className={cn("font-bold", set.winner === 'B' ? "text-primary" : "text-chart-2")}>{set.teamBScore}</span>
-                                </div>
-                            </div>
-                        ))}
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
-        )}
     </main>
   );
 }
