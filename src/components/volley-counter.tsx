@@ -242,10 +242,11 @@ export default function VolleyCounter() {
         >
           <div
             className={cn(
-              'select-none text-[26vw] leading-[1] font-black font-headline transition-all duration-300 ease-out md:text-[16rem] lg:text-[20rem] xl:text-[24rem]',
+              'select-none text-[26vw] leading-none font-black font-headline transition-all duration-300 ease-out md:text-[16rem] lg:text-[20rem] xl:text-[24rem]',
               team === 'A' ? 'text-team-a-fg' : 'text-team-b-fg',
               animatedScore === team && 'scale-110'
             )}
+            style={{ lineHeight: 0.8 }}
           >
             {score}
           </div>
@@ -317,51 +318,53 @@ export default function VolleyCounter() {
                                 </Button>
                             </div>
                         </div>
-                    <div className="flex w-full items-center justify-center gap-2">
-                        <Button onClick={undo} disabled={!canUndo} variant="outline" size="icon" aria-label="Desfazer">
-                        <Undo2 />
-                        </Button>
-                        <Button onClick={redo} disabled={!canRedo} variant="outline" size="icon" aria-label="Refazer">
-                        <Redo2 />
-                        </Button>
-                        <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                            <Button variant="destructive" size="icon" aria-label="Resetar Partida">
-                            <RotateCcw />
+                        <div className="flex w-full items-center justify-center gap-2">
+                            <Button onClick={undo} disabled={!canUndo} variant="outline" size="icon" aria-label="Desfazer">
+                            <Undo2 />
                             </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                            <AlertDialogHeader>
-                            <AlertDialogTitle className="select-none">Você tem certeza?</AlertDialogTitle>
-                            <AlertDialogDescription className="select-none">
-                                Isso irá resetar a partida inteira, incluindo todos os placares, nomes dos times e o cronômetro. Esta ação não pode ser desfeita.
-                            </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                            <AlertDialogAction onClick={resetMatch}>Confirmar Reset</AlertDialogAction>
-                            </AlertDialogFooter>
-                        </AlertDialogContent>
-                        </AlertDialog>
-                        <Button asChild variant="outline" size="icon" aria-label="Configurações">
-                        <Link href="/settings">
-                            <Settings />
-                        </Link>
-                        </Button>
-                        <TooltipProvider>
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                <Button variant="ghost" size="icon" aria-label="Ajuda">
-                                    <HelpCircle />
+                            <Button onClick={redo} disabled={!canRedo} variant="outline" size="icon" aria-label="Refazer">
+                            <Redo2 />
+                            </Button>
+                            <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                                <Button variant="destructive" size="icon" aria-label="Resetar Partida">
+                                <RotateCcw />
                                 </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                <p className="select-none">Toque no placar para adicionar um ponto.</p>
-                                <p className="select-none">Segure ou clique direito para remover.</p>
-                                </TooltipContent>
-                            </Tooltip>
-                        </TooltipProvider>
-                    </div>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                <AlertDialogTitle className="select-none">Você tem certeza?</AlertDialogTitle>
+                                <AlertDialogDescription className="select-none">
+                                    Isso irá resetar a partida inteira, incluindo todos os placares, nomes dos times e o cronômetro. Esta ação não pode ser desfeita.
+                                </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                <AlertDialogAction onClick={resetMatch}>Confirmar Reset</AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                            </AlertDialog>
+                        </div>
+                        <div className="flex w-full items-center justify-center gap-2">
+                            <Button asChild variant="outline" size="icon" aria-label="Configurações">
+                            <Link href="/settings">
+                                <Settings />
+                            </Link>
+                            </Button>
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                    <Button variant="ghost" size="icon" aria-label="Ajuda">
+                                        <HelpCircle />
+                                    </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                    <p className="select-none">Toque no placar para adicionar um ponto.</p>
+                                    <p className="select-none">Segure ou clique direito para remover.</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+                        </div>
                     </CardContent>
                      {state.sets.length > 0 && (
                         <>
