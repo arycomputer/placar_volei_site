@@ -229,7 +229,7 @@ export default function VolleyCounter() {
         >
           <div
             className={cn(
-              'font-headline font-black text-7xl transition-all duration-300 ease-out md:text-8xl lg:text-9xl',
+              'font-headline font-black text-9xl leading-none transition-all duration-300 ease-out md:text-[12rem] lg:text-[16rem]',
               team === 'A' ? 'text-team-a-fg' : 'text-team-b-fg',
               animatedScore === team && 'scale-110'
             )}
