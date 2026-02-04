@@ -257,71 +257,66 @@ export default function VolleyCounter() {
           <ScoreDisplay team="A" />
         </div>
         
-        <div className="order-first flex w-full flex-col items-center justify-start gap-4 md:order-none md:grow-0 md:basis-[10%]">
-            <div className="text-center text-xl font-bold text-muted-foreground">
-                <div className="uppercase tracking-widest">Set</div>
-                <div className="font-black text-5xl text-foreground">{state.currentSet}</div>
-            </div>
-
-            <Card className="w-full shadow-lg">
-                <CardContent className="flex flex-col items-center justify-center gap-4 p-4">
-                    <div className="flex flex-wrap items-center justify-center gap-2">
-                        <div className="font-mono text-2xl font-bold" aria-label="Cronômetro da Partida">{formatTime(seconds)}</div>
-                        <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => setIsTimerActive(!isTimerActive)}
-                        aria-label={isTimerActive ? 'Pausar cronômetro' : 'Iniciar cronômetro'}
-                        >
-                        {isTimerActive ? (
-                            <Pause />
-                        ) : (
-                            <Play />
-                        )}
-                        </Button>
-                        <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => setSeconds(0)}
-                        aria-label="Resetar cronômetro"
-                        >
-                        <TimerReset />
-                        </Button>
-                    </div>
-                    <div className="flex w-full items-center justify-center gap-2">
-                        <Button onClick={undo} disabled={!canUndo} variant="outline" size="icon" aria-label="Desfazer">
-                            <Undo2 />
-                        </Button>
-                        <Button onClick={redo} disabled={!canRedo} variant="outline" size="icon" aria-label="Refazer">
-                            <Redo2 />
-                        </Button>
-                        <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                                <Button variant="destructive" size="icon" aria-label="Resetar Partida">
-                                    <RotateCcw />
-                                </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                                <AlertDialogHeader>
-                                <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                    Isso irá resetar a partida inteira, incluindo todos os placares, nomes dos times e o cronômetro. Esta ação não pode ser desfeita.
-                                </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                                <AlertDialogAction onClick={resetMatch}>Confirmar Reset</AlertDialogAction>
-                                </AlertDialogFooter>
-                            </AlertDialogContent>
-                        </AlertDialog>
-                        <Button asChild variant="outline" size="icon" aria-label="Configurações">
-                            <Link href="/settings">
-                                <Settings />
-                            </Link>
-                        </Button>
-                    </div>
-                </CardContent>
-            </Card>
+        <div className="order-first flex w-full flex-col md:order-none md:grow-0 md:basis-[10%]">
+          <Card className="flex h-full w-full flex-col items-stretch text-center shadow-lg">
+            <CardHeader className="p-4">
+              <CardDescription className="uppercase tracking-widest">Set</CardDescription>
+              <CardTitle className="font-black text-5xl">{state.currentSet}</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-grow flex-col items-center justify-center gap-4 p-4">
+              <div className="flex flex-wrap items-center justify-center gap-2">
+                <div className="font-mono text-2xl font-bold" aria-label="Cronômetro da Partida">{formatTime(seconds)}</div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setIsTimerActive(!isTimerActive)}
+                  aria-label={isTimerActive ? 'Pausar cronômetro' : 'Iniciar cronômetro'}
+                >
+                  {isTimerActive ? <Pause /> : <Play />}
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setSeconds(0)}
+                  aria-label="Resetar cronômetro"
+                >
+                  <TimerReset />
+                </Button>
+              </div>
+              <div className="flex w-full items-center justify-center gap-2">
+                <Button onClick={undo} disabled={!canUndo} variant="outline" size="icon" aria-label="Desfazer">
+                  <Undo2 />
+                </Button>
+                <Button onClick={redo} disabled={!canRedo} variant="outline" size="icon" aria-label="Refazer">
+                  <Redo2 />
+                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="destructive" size="icon" aria-label="Resetar Partida">
+                      <RotateCcw />
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Isso irá resetar a partida inteira, incluindo todos os placares, nomes dos times e o cronômetro. Esta ação não pode ser desfeita.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction onClick={resetMatch}>Confirmar Reset</AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+                <Button asChild variant="outline" size="icon" aria-label="Configurações">
+                  <Link href="/settings">
+                    <Settings />
+                  </Link>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
         
         <div className="flex flex-1 flex-col md:grow-0 md:basis-[45%]">
