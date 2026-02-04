@@ -111,7 +111,7 @@ export default function VolleyCounter() {
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
-    if (isTimerActive && !isMatchOver) {
+    if (isTimerActive && !isMatchOver && !isSetOver) {
       interval = setInterval(() => {
         setSeconds((s) => s + 1);
       }, 1000);
@@ -119,7 +119,7 @@ export default function VolleyCounter() {
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [isTimerActive, isMatchOver]);
+  }, [isTimerActive, isMatchOver, isSetOver]);
   
   const handleFinishSet = useCallback(() => {
     if (!isSetOver) return;
@@ -229,7 +229,7 @@ export default function VolleyCounter() {
         >
           <div
             className={cn(
-              'select-none font-headline font-black text-9xl leading-none transition-all duration-300 ease-out md:text-[12rem] lg:text-[16rem]',
+              'select-none font-headline font-black text-9xl leading-[1] transition-all duration-300 ease-out md:text-[12rem] lg:text-[16rem]',
               team === 'A' ? 'text-team-a-fg' : 'text-team-b-fg',
               animatedScore === team && 'scale-110'
             )}
@@ -271,13 +271,13 @@ export default function VolleyCounter() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-stretch">
-        <div className="flex w-full flex-grow flex-col items-stretch gap-4 p-4 md:flex-row md:gap-6 md:p-8">
-            <div className="flex flex-1 flex-col">
+    <main className="flex h-screen flex-col items-stretch">
+        <div className="flex w-full flex-grow items-stretch gap-6 p-8">
+            <div className="w-[40%] flex-col">
                 <ScoreDisplay team="A" />
             </div>
             
-            <div className="order-first flex w-full flex-col md:order-none md:w-[20%]">
+            <div className="w-[20%] flex-col">
                 <Card className="flex h-full w-full flex-col items-stretch text-center shadow-lg">
                     <CardHeader className="p-4">
                         <CardDescription className="uppercase tracking-widest select-none">Set</CardDescription>
@@ -359,7 +359,7 @@ export default function VolleyCounter() {
                 </Card>
             </div>
             
-            <div className="flex flex-1 flex-col">
+            <div className="w-[40%] flex-col">
                 <ScoreDisplay team="B" />
             </div>
         </div>
