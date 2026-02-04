@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import Link from 'next/link';
 import {
   Card,
@@ -25,6 +25,7 @@ import {
 import { useHistory } from '@/hooks/use-history';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { ToastAction } from "@/components/ui/toast";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -120,14 +121,40 @@ export default function VolleyCounter() {
     };
   }, [isTimerActive, isMatchOver]);
   
+  const handleFinishSet = useCallback(() => {
+    if (!isSetOver) return;
+
+    setMatchState(prev => {
+        const newSet = { teamAScore: prev.teamAScore, teamBScore: prev.teamBScore, winner: teamAWinsSet ? 'A' : 'B' as 'A' | 'B' };
+        const newSets = [...prev.sets, newSet];
+        
+        return {
+            ...prev,
+            sets: newSets,
+            currentSet: prev.currentSet + 1,
+            teamAScore: 0,
+            teamBScore: 0,
+        }
+    });
+    setIsTimerActive(true);
+  }, [isSetOver, teamAWinsSet, setMatchState]);
+
+  const prevIsSetOverRef = useRef<boolean>();
   useEffect(() => {
-    if (isSetOver && !isMatchOver) {
+    prevIsSetOverRef.current = isSetOver;
+  });
+  const prevIsSetOver = prevIsSetOverRef.current;
+
+  useEffect(() => {
+    if (!prevIsSetOver && isSetOver && !isMatchOver) {
       toast({
         title: "Set Finalizado!",
         description: `${teamAWinsSet ? state.teamAName : state.teamBName} venceu o set ${state.currentSet}.`,
+        action: <ToastAction altText="Iniciar Próximo Set" onClick={handleFinishSet}>Iniciar Próximo Set</ToastAction>,
+        duration: 1000 * 60 * 60, // 1 hour
       });
     }
-  }, [isSetOver, isMatchOver, teamAWinsSet, state.teamAName, state.teamBName, state.currentSet, toast]);
+  }, [prevIsSetOver, isSetOver, isMatchOver, teamAWinsSet, state.teamAName, state.teamBName, state.currentSet, toast, handleFinishSet]);
 
   const handleScoreChange = (team: 'A' | 'B', delta: number) => {
     if (isMatchOver || isSetOver) return;
@@ -151,23 +178,6 @@ export default function VolleyCounter() {
       [team === 'A' ? 'teamAName' : 'teamBName']: name,
     }));
   };
-
-  const handleFinishSet = () => {
-    if (!isSetOver) return;
-
-    setMatchState(prev => {
-        const newSet = { teamAScore: prev.teamAScore, teamBScore: prev.teamBScore, winner: teamAWinsSet ? 'A' : 'B' as 'A' | 'B' };
-        const newSets = [...prev.sets, newSet];
-        
-        return {
-            ...prev,
-            sets: newSets,
-            currentSet: prev.currentSet + 1,
-            teamAScore: 0,
-            teamBScore: 0,
-        }
-    });
-  }
 
   const resetMatch = () => {
     resetHistory(initialMatchState);
@@ -330,18 +340,6 @@ export default function VolleyCounter() {
                 <ScoreDisplay team="B" />
             </div>
         </div>
-
-        {isSetOver && !isMatchOver && (
-            <div className="px-4 pb-4 md:px-8 md:pb-8">
-                <Card className="animate-in fade-in-50 p-4 text-center shadow-lg">
-                    <CardContent className="flex items-center justify-center p-0">
-                        <Button onClick={handleFinishSet} size="lg">
-                            Iniciar Próximo Set
-                        </Button>
-                    </CardContent>
-                </Card>
-            </div>
-        )}
         
         {state.sets.length > 0 && (
             <div className="px-4 pb-4 md:px-8 md:pb-8">
