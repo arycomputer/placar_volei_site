@@ -120,6 +120,15 @@ export default function VolleyCounter() {
     };
   }, [isTimerActive, isMatchOver]);
   
+  useEffect(() => {
+    if (isSetOver && !isMatchOver) {
+      toast({
+        title: "Set Finalizado!",
+        description: `${teamAWinsSet ? state.teamAName : state.teamBName} venceu o set ${state.currentSet}.`,
+      });
+    }
+  }, [isSetOver, isMatchOver, teamAWinsSet, state.teamAName, state.teamBName, state.currentSet, toast]);
+
   const handleScoreChange = (team: 'A' | 'B', delta: number) => {
     if (isMatchOver || isSetOver) return;
 
@@ -158,11 +167,6 @@ export default function VolleyCounter() {
             teamBScore: 0,
         }
     });
-
-    toast({
-        title: `Set ${state.currentSet} Finalizado!`,
-        description: `${teamAWinsSet ? state.teamAName : state.teamBName} venceu o set.`,
-      });
   }
 
   const resetMatch = () => {
@@ -327,13 +331,11 @@ export default function VolleyCounter() {
             </div>
         </div>
 
-        {isSetOver && (
+        {isSetOver && !isMatchOver && (
             <div className="px-4 pb-4 md:px-8 md:pb-8">
-                <Card className="animate-in fade-in-50 border-primary bg-primary/10 p-4 text-center shadow-lg">
-                    <CardContent className="flex flex-col items-center justify-center gap-4 p-0 sm:flex-row">
-                        <p className="rounded-full bg-primary px-4 py-1 font-bold text-lg text-primary-foreground">Set Point!</p>
-                        <p className="font-semibold text-primary">{teamAWinsSet ? state.teamAName : state.teamBName} venceu o set.</p>
-                        <Button onClick={handleFinishSet}>
+                <Card className="animate-in fade-in-50 p-4 text-center shadow-lg">
+                    <CardContent className="flex items-center justify-center p-0">
+                        <Button onClick={handleFinishSet} size="lg">
                             Iniciar Próximo Set
                         </Button>
                     </CardContent>
