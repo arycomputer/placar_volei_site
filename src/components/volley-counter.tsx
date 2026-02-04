@@ -226,7 +226,7 @@ export default function VolleyCounter() {
   
   if (isMatchOver) {
     return (
-        <div className="mx-auto flex w-full max-w-4xl flex-col items-center gap-8">
+        <div className="mx-auto flex w-full max-w-4xl flex-col items-center gap-8 p-4 md:p-8">
             <Card className="w-full animate-in fade-in zoom-in-95 p-8 text-center shadow-2xl">
                 <CardHeader>
                     <CardTitle className="text-4xl font-black text-primary">Fim de Jogo!</CardTitle>
@@ -251,13 +251,13 @@ export default function VolleyCounter() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-6xl flex-grow flex-col gap-4 md:gap-6">
+    <div className="flex w-full flex-grow flex-col gap-4 p-4 md:gap-6 md:p-8">
       <div className="flex flex-grow flex-col items-stretch gap-4 md:flex-row md:gap-8">
-        <div className="flex flex-1 md:grow-[9]">
+        <div className="flex flex-1 flex-col md:grow-0 md:basis-[45%]">
           <ScoreDisplay team="A" />
         </div>
         
-        <div className="order-first flex w-full flex-col items-center justify-start gap-4 md:order-none md:grow-[2]">
+        <div className="order-first flex w-full flex-col items-center justify-start gap-4 md:order-none md:grow-0 md:basis-[10%]">
             <div className="text-center text-xl font-bold text-muted-foreground">
                 <div className="uppercase tracking-widest">Set</div>
                 <div className="font-black text-5xl text-foreground">{state.currentSet}</div>
@@ -324,7 +324,7 @@ export default function VolleyCounter() {
             </Card>
         </div>
         
-        <div className="flex flex-1 md:grow-[9]">
+        <div className="flex flex-1 flex-col md:grow-0 md:basis-[45%]">
           <ScoreDisplay team="B" />
         </div>
       </div>
