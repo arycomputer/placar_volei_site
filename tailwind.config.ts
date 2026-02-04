@@ -67,6 +67,8 @@ export default {
           border: 'hsl(var(--sidebar-border))',
           ring: 'hsl(var(--sidebar-ring))',
         },
+        'team-a-fg': 'hsl(var(--team-a-fg))',
+        'team-b-fg': 'hsl(var(--team-b-fg))',
       },
       borderRadius: {
         lg: 'var(--radius)',

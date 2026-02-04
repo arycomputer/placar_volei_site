@@ -230,7 +230,7 @@ export default function VolleyCounter() {
           <div
             className={cn(
               'font-headline font-black text-7xl transition-all duration-300 ease-out md:text-8xl lg:text-9xl',
-              team === 'A' ? 'text-destructive' : 'text-chart-2',
+              team === 'A' ? 'text-team-a-fg' : 'text-team-b-fg',
               animatedScore === team && 'scale-110'
             )}
           >
@@ -252,7 +252,7 @@ export default function VolleyCounter() {
                     </CardHeader>
                     <CardContent className="flex flex-col items-center gap-4">
                         <Trophy className="h-24 w-24 text-primary" />
-                        <p className={cn("text-2xl font-bold", winner === 'A' ? 'text-destructive' : 'text-chart-2')}>
+                        <p className={cn("text-2xl font-bold", winner === 'A' ? 'text-team-a-fg' : 'text-team-b-fg')}>
                             {winner === 'A' ? state.teamAName : state.teamBName} venceu a partida!
                         </p>
                         <p className="text-lg text-muted-foreground">
@@ -347,9 +347,9 @@ export default function VolleyCounter() {
                                     <div key={index} className="flex items-center justify-between rounded-md bg-muted/50 p-2">
                                         <div className="font-semibold">Set {index + 1}</div>
                                         <div className="flex items-center gap-2 text-lg">
-                                            <span className={cn("font-bold", set.winner === 'A' ? "text-primary" : "text-destructive")}>{set.teamAScore}</span>
+                                            <span className={cn("font-bold", set.winner === 'A' ? "text-primary" : "text-team-a-fg")}>{set.teamAScore}</span>
                                             <span className="text-muted-foreground">-</span>
-                                            <span className={cn("font-bold", set.winner === 'B' ? "text-primary" : "text-chart-2")}>{set.teamBScore}</span>
+                                            <span className={cn("font-bold", set.winner === 'B' ? "text-primary" : "text-team-b-fg")}>{set.teamBScore}</span>
                                         </div>
                                     </div>
                                 ))}

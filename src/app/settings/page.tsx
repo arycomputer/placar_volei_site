@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowLeft } from 'lucide-react';
 import { FormEvent } from 'react';
+import { Separator } from '@/components/ui/separator';
 
 export default function SettingsPage() {
     const { settings, setSettings } = useSettings();
@@ -20,6 +21,10 @@ export default function SettingsPage() {
             theme: formData.get('theme') as 'light' | 'dark',
             pointsToWin: Number(formData.get('pointsToWin')),
             tieBreakPoints: Number(formData.get('tieBreakPoints')),
+            teamABgColor: formData.get('teamABgColor') as string,
+            teamAFgColor: formData.get('teamAFgColor') as string,
+            teamBBgColor: formData.get('teamBBgColor') as string,
+            teamBFgColor: formData.get('teamBFgColor') as string,
         };
         setSettings(newSettings);
     };
@@ -44,43 +49,102 @@ export default function SettingsPage() {
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={handleSubmit} className="space-y-6">
-                            <div className="space-y-2">
-                                <Label htmlFor="theme">Tema</Label>
-                                <Select name="theme" defaultValue={settings.theme}>
-                                    <SelectTrigger id="theme">
-                                        <SelectValue placeholder="Selecione o tema" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="dark">Escuro</SelectItem>
-                                        <SelectItem value="light">Claro</SelectItem>
-                                    </SelectContent>
-                                </Select>
+                            <div className="space-y-4">
+                                <h3 className="text-lg font-medium">Geral</h3>
+                                <div className="space-y-2">
+                                    <Label htmlFor="theme">Tema</Label>
+                                    <Select name="theme" defaultValue={settings.theme}>
+                                        <SelectTrigger id="theme">
+                                            <SelectValue placeholder="Selecione o tema" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="dark">Escuro</SelectItem>
+                                            <SelectItem value="light">Claro</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
                             </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="pointsToWin">Pontos para vencer o set</Label>
-                                <Input
-                                    id="pointsToWin"
-                                    name="pointsToWin"
-                                    type="number"
-                                    defaultValue={settings.pointsToWin}
-                                    min="1"
-                                />
-                                <p className="text-sm text-muted-foreground">
-                                    A pontuação necessária para vencer um set normal.
-                                </p>
+                            <Separator />
+                            <div className="space-y-4">
+                                <h3 className="text-lg font-medium">Regras</h3>
+                                <div className="space-y-2">
+                                    <Label htmlFor="pointsToWin">Pontos para vencer o set</Label>
+                                    <Input
+                                        id="pointsToWin"
+                                        name="pointsToWin"
+                                        type="number"
+                                        defaultValue={settings.pointsToWin}
+                                        min="1"
+                                    />
+                                    <p className="text-sm text-muted-foreground">
+                                        A pontuação necessária para vencer um set normal.
+                                    </p>
+                                </div>
+                                 <div className="space-y-2">
+                                    <Label htmlFor="tieBreakPoints">Pontos para vencer o tie-break</Label>
+                                    <Input
+                                        id="tieBreakPoints"
+                                        name="tieBreakPoints"
+                                        type="number"
+                                        defaultValue={settings.tieBreakPoints}
+                                        min="1"
+                                    />
+                                    <p className="text-sm text-muted-foreground">
+                                        A pontuação necessária para vencer o set final (tie-break).
+                                    </p>
+                                </div>
                             </div>
-                             <div className="space-y-2">
-                                <Label htmlFor="tieBreakPoints">Pontos para vencer o tie-break</Label>
-                                <Input
-                                    id="tieBreakPoints"
-                                    name="tieBreakPoints"
-                                    type="number"
-                                    defaultValue={settings.tieBreakPoints}
-                                    min="1"
-                                />
-                                <p className="text-sm text-muted-foreground">
-                                    A pontuação necessária para vencer o set final (tie-break).
-                                </p>
+                            <Separator />
+                            <div className="space-y-4">
+                                <h3 className="text-lg font-medium">Cores dos Times</h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="space-y-4 rounded-md border p-4">
+                                        <h4 className="font-semibold">Time A (Casa)</h4>
+                                        <div className="flex items-center justify-between">
+                                            <Label htmlFor="teamABgColor">Cor de Fundo</Label>
+                                            <Input
+                                                id="teamABgColor"
+                                                name="teamABgColor"
+                                                type="color"
+                                                defaultValue={settings.teamABgColor}
+                                                className="h-10 w-12 p-1"
+                                            />
+                                        </div>
+                                        <div className="flex items-center justify-between">
+                                            <Label htmlFor="teamAFgColor">Cor da Fonte</Label>
+                                            <Input
+                                                id="teamAFgColor"
+                                                name="teamAFgColor"
+                                                type="color"
+                                                defaultValue={settings.teamAFgColor}
+                                                className="h-10 w-12 p-1"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="space-y-4 rounded-md border p-4">
+                                        <h4 className="font-semibold">Time B (Visitante)</h4>
+                                        <div className="flex items-center justify-between">
+                                            <Label htmlFor="teamBBgColor">Cor de Fundo</Label>
+                                            <Input
+                                                id="teamBBgColor"
+                                                name="teamBBgColor"
+                                                type="color"
+                                                defaultValue={settings.teamBBgColor}
+                                                className="h-10 w-12 p-1"
+                                            />
+                                        </div>
+                                        <div className="flex items-center justify-between">
+                                            <Label htmlFor="teamBFgColor">Cor da Fonte</Label>
+                                            <Input
+                                                id="teamBFgColor"
+                                                name="teamBFgColor"
+                                                type="color"
+                                                defaultValue={settings.teamBFgColor}
+                                                className="h-10 w-12 p-1"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <Button type="submit" className="w-full">Salvar Alterações</Button>
                         </form>
