@@ -21,6 +21,7 @@ import {
   Trophy,
   RotateCcw,
   Settings,
+  HelpCircle,
 } from 'lucide-react';
 import { useHistory } from '@/hooks/use-history';
 import { cn } from '@/lib/utils';
@@ -38,6 +39,12 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useSettings } from '@/contexts/settings-context';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 type SetScore = { teamAScore: number; teamBScore: number; winner?: 'A' | 'B' };
 
@@ -121,6 +128,12 @@ export default function VolleyCounter() {
     };
   }, [isTimerActive, isMatchOver, isSetOver]);
   
+    useEffect(() => {
+      if (isSetOver) {
+          setIsTimerActive(false);
+      }
+  }, [isSetOver]);
+
   const handleFinishSet = useCallback(() => {
     if (!isSetOver) return;
 
@@ -236,7 +249,6 @@ export default function VolleyCounter() {
           >
             {score}
           </div>
-          <p className="mt-2 select-none text-xs text-muted-foreground">Toque para adicionar, segure para remover</p>
         </CardContent>
       </Card>
     );
@@ -334,6 +346,19 @@ export default function VolleyCounter() {
                             <Settings />
                         </Link>
                         </Button>
+                        <TooltipProvider>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                <Button variant="ghost" size="icon" aria-label="Ajuda">
+                                    <HelpCircle />
+                                </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                <p>Toque no placar para adicionar um ponto.</p>
+                                <p>Segure ou clique direito para remover.</p>
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
                     </div>
                     </CardContent>
                      {state.sets.length > 0 && (
