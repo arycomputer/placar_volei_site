@@ -213,7 +213,8 @@ export default function VolleyCounter() {
           <div
             className={cn(
               'font-headline font-black text-7xl transition-all duration-300 ease-out md:text-8xl lg:text-9xl',
-              animatedScore === team && 'scale-110 text-primary'
+              team === 'A' ? 'text-chart-1' : 'text-chart-2',
+              animatedScore === team && 'scale-110'
             )}
           >
             {score}
@@ -226,137 +227,143 @@ export default function VolleyCounter() {
   
   if (isMatchOver) {
     return (
-        <div className="mx-auto flex w-full max-w-4xl flex-col items-center gap-8 p-4 md:p-8">
-            <Card className="w-full animate-in fade-in zoom-in-95 p-8 text-center shadow-2xl">
-                <CardHeader>
-                    <CardTitle className="text-4xl font-black text-primary">Fim de Jogo!</CardTitle>
-                </CardHeader>
-                <CardContent className="flex flex-col items-center gap-4">
-                    <Trophy className="h-24 w-24 text-primary" />
-                    <p className="text-2xl font-bold">
-                        {winner === 'A' ? state.teamAName : state.teamBName} venceu a partida!
-                    </p>
-                    <p className="text-lg text-muted-foreground">
-                        Placar final: {teamASetsWon} - {teamBSetsWon}
-                    </p>
-                </CardContent>
-                <CardFooter className="justify-center">
-                     <Button onClick={resetMatch} size="lg">
-                        <RotateCcw className="mr-2 h-5 w-5" /> Nova Partida
-                    </Button>
-                </CardFooter>
-            </Card>
-        </div>
+        <main className="flex min-h-screen items-center justify-center">
+            <div className="mx-auto flex w-full max-w-4xl flex-col items-center gap-8 p-4 md:p-8">
+                <Card className="w-full animate-in fade-in zoom-in-95 p-8 text-center shadow-2xl">
+                    <CardHeader>
+                        <CardTitle className="text-4xl font-black text-primary">Fim de Jogo!</CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex flex-col items-center gap-4">
+                        <Trophy className="h-24 w-24 text-primary" />
+                        <p className={cn("text-2xl font-bold", winner === 'A' ? 'text-chart-1' : 'text-chart-2')}>
+                            {winner === 'A' ? state.teamAName : state.teamBName} venceu a partida!
+                        </p>
+                        <p className="text-lg text-muted-foreground">
+                            Placar final: {teamASetsWon} - {teamBSetsWon}
+                        </p>
+                    </CardContent>
+                    <CardFooter className="justify-center">
+                         <Button onClick={resetMatch} size="lg">
+                            <RotateCcw className="mr-2 h-5 w-5" /> Nova Partida
+                        </Button>
+                    </CardFooter>
+                </Card>
+            </div>
+        </main>
     )
   }
 
   return (
-    <div className="flex w-full flex-grow flex-col gap-4 p-4 md:gap-6 md:p-8">
-      <div className="flex flex-grow flex-col items-stretch gap-4 md:flex-row md:gap-8">
-        <div className="flex flex-1 flex-col md:grow-0 md:basis-[45%]">
-          <ScoreDisplay team="A" />
-        </div>
-        
-        <div className="order-first flex w-full flex-col md:order-none md:grow-0 md:basis-[10%]">
-          <Card className="flex h-full w-full flex-col items-stretch text-center shadow-lg">
-            <CardHeader className="p-4">
-              <CardDescription className="uppercase tracking-widest">Set</CardDescription>
-              <CardTitle className="font-black text-5xl">{state.currentSet}</CardTitle>
-            </CardHeader>
-            <CardContent className="flex flex-grow flex-col items-center justify-center gap-4 p-4">
-              <div className="flex flex-wrap items-center justify-center gap-2">
-                <div className="font-mono text-2xl font-bold" aria-label="Cronômetro da Partida">{formatTime(seconds)}</div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setIsTimerActive(!isTimerActive)}
-                  aria-label={isTimerActive ? 'Pausar cronômetro' : 'Iniciar cronômetro'}
-                >
-                  {isTimerActive ? <Pause /> : <Play />}
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setSeconds(0)}
-                  aria-label="Resetar cronômetro"
-                >
-                  <TimerReset />
-                </Button>
-              </div>
-              <div className="flex w-full items-center justify-center gap-2">
-                <Button onClick={undo} disabled={!canUndo} variant="outline" size="icon" aria-label="Desfazer">
-                  <Undo2 />
-                </Button>
-                <Button onClick={redo} disabled={!canRedo} variant="outline" size="icon" aria-label="Refazer">
-                  <Redo2 />
-                </Button>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button variant="destructive" size="icon" aria-label="Resetar Partida">
-                      <RotateCcw />
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Isso irá resetar a partida inteira, incluindo todos os placares, nomes dos times e o cronômetro. Esta ação não pode ser desfeita.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                      <AlertDialogAction onClick={resetMatch}>Confirmar Reset</AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-                <Button asChild variant="outline" size="icon" aria-label="Configurações">
-                  <Link href="/settings">
-                    <Settings />
-                  </Link>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-        
-        <div className="flex flex-1 flex-col md:grow-0 md:basis-[45%]">
-          <ScoreDisplay team="B" />
-        </div>
-      </div>
-
-      {isSetOver && (
-        <Card className="animate-in fade-in-50 border-primary bg-primary/10 p-4 text-center shadow-lg">
-          <CardContent className="flex flex-col items-center justify-center gap-4 p-0 sm:flex-row">
-            <p className="rounded-full bg-primary px-4 py-1 font-bold text-lg text-primary-foreground">Set Point!</p>
-            <p className="font-semibold text-primary">{teamAWinsSet ? state.teamAName : state.teamBName} venceu o set.</p>
-            <Button onClick={handleFinishSet}>
-                Iniciar Próximo Set
-            </Button>
-          </CardContent>
-        </Card>
-      )}
-      
-      {state.sets.length > 0 && (
-        <Card className="shadow-lg">
-          <CardHeader>
-            <CardTitle>Histórico de Sets</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              {state.sets.map((set, index) => (
-                <div key={index} className="flex items-center justify-between rounded-md bg-muted/50 p-2">
-                    <div className="font-semibold">Set {index + 1}</div>
-                    <div className="flex items-center gap-2 text-lg">
-                        <span className={cn("font-bold", set.winner === 'A' && "text-primary")}>{set.teamAScore}</span>
-                        <span className="text-muted-foreground">-</span>
-                        <span className={cn("font-bold", set.winner === 'B' && "text-primary")}>{set.teamBScore}</span>
-                    </div>
-                </div>
-              ))}
+    <main className="flex min-h-screen flex-col items-stretch">
+        <div className="flex w-full flex-grow flex-col gap-4 p-4 md:flex-row md:gap-6 md:p-8">
+            <div className="flex flex-1 flex-col md:grow-0 md:basis-[45%]">
+                <ScoreDisplay team="A" />
             </div>
-          </CardContent>
-        </Card>
-      )}
-    </div>
+            
+            <div className="order-first flex w-full flex-col md:order-none md:grow-0 md:basis-[10%]">
+                <Card className="flex h-full w-full flex-col items-stretch text-center shadow-lg">
+                    <CardHeader className="p-4">
+                        <CardDescription className="uppercase tracking-widest">Set</CardDescription>
+                        <CardTitle className="font-black text-5xl">{state.currentSet}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex flex-grow flex-col items-center justify-center gap-4 p-4">
+                    <div className="flex flex-wrap items-center justify-center gap-2">
+                        <div className="font-mono text-2xl font-bold" aria-label="Cronômetro da Partida">{formatTime(seconds)}</div>
+                        <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setIsTimerActive(!isTimerActive)}
+                        aria-label={isTimerActive ? 'Pausar cronômetro' : 'Iniciar cronômetro'}
+                        >
+                        {isTimerActive ? <Pause /> : <Play />}
+                        </Button>
+                        <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setSeconds(0)}
+                        aria-label="Resetar cronômetro"
+                        >
+                        <TimerReset />
+                        </Button>
+                    </div>
+                    <div className="flex w-full items-center justify-center gap-2">
+                        <Button onClick={undo} disabled={!canUndo} variant="outline" size="icon" aria-label="Desfazer">
+                        <Undo2 />
+                        </Button>
+                        <Button onClick={redo} disabled={!canRedo} variant="outline" size="icon" aria-label="Refazer">
+                        <Redo2 />
+                        </Button>
+                        <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                            <Button variant="destructive" size="icon" aria-label="Resetar Partida">
+                            <RotateCcw />
+                            </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                            <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                                Isso irá resetar a partida inteira, incluindo todos os placares, nomes dos times e o cronômetro. Esta ação não pode ser desfeita.
+                            </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                            <AlertDialogAction onClick={resetMatch}>Confirmar Reset</AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                        </AlertDialog>
+                        <Button asChild variant="outline" size="icon" aria-label="Configurações">
+                        <Link href="/settings">
+                            <Settings />
+                        </Link>
+                        </Button>
+                    </div>
+                    </CardContent>
+                </Card>
+            </div>
+            
+            <div className="flex flex-1 flex-col md:grow-0 md:basis-[45%]">
+                <ScoreDisplay team="B" />
+            </div>
+        </div>
+
+        {isSetOver && (
+            <div className="px-4 pb-4 md:px-8 md:pb-8">
+                <Card className="animate-in fade-in-50 border-primary bg-primary/10 p-4 text-center shadow-lg">
+                    <CardContent className="flex flex-col items-center justify-center gap-4 p-0 sm:flex-row">
+                        <p className="rounded-full bg-primary px-4 py-1 font-bold text-lg text-primary-foreground">Set Point!</p>
+                        <p className="font-semibold text-primary">{teamAWinsSet ? state.teamAName : state.teamBName} venceu o set.</p>
+                        <Button onClick={handleFinishSet}>
+                            Iniciar Próximo Set
+                        </Button>
+                    </CardContent>
+                </Card>
+            </div>
+        )}
+        
+        {state.sets.length > 0 && (
+            <div className="px-4 pb-4 md:px-8 md:pb-8">
+                <Card className="shadow-lg">
+                    <CardHeader>
+                        <CardTitle>Histórico de Sets</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="space-y-2">
+                        {state.sets.map((set, index) => (
+                            <div key={index} className="flex items-center justify-between rounded-md bg-muted/50 p-2">
+                                <div className="font-semibold">Set {index + 1}</div>
+                                <div className="flex items-center gap-2 text-lg">
+                                    <span className={cn("font-bold", set.winner === 'A' ? "text-primary" : "text-chart-1")}>{set.teamAScore}</span>
+                                    <span className="text-muted-foreground">-</span>
+                                    <span className={cn("font-bold", set.winner === 'B' ? "text-primary" : "text-chart-2")}>{set.teamBScore}</span>
+                                </div>
+                            </div>
+                        ))}
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
+        )}
+    </main>
   );
 }
