@@ -217,7 +217,7 @@ export default function VolleyCounter() {
                     aria-label={`Nome do Time ${team}`}
                     disabled={isMatchOver}
                 />
-                <p className="whitespace-nowrap text-sm font-normal text-muted-foreground">Sets: {setsWon}</p>
+                <p className="whitespace-nowrap text-sm font-normal text-muted-foreground select-none">Sets: {setsWon}</p>
             </div>
         </CardHeader>
         <CardContent 
@@ -229,7 +229,7 @@ export default function VolleyCounter() {
         >
           <div
             className={cn(
-              'font-headline font-black text-9xl leading-none transition-all duration-300 ease-out md:text-[12rem] lg:text-[16rem]',
+              'select-none font-headline font-black text-9xl leading-none transition-all duration-300 ease-out md:text-[12rem] lg:text-[16rem]',
               team === 'A' ? 'text-team-a-fg' : 'text-team-b-fg',
               animatedScore === team && 'scale-110'
             )}
@@ -248,14 +248,14 @@ export default function VolleyCounter() {
             <div className="mx-auto flex w-full max-w-4xl flex-col items-center gap-8 p-4 md:p-8">
                 <Card className="w-full animate-in fade-in zoom-in-95 p-8 text-center shadow-2xl">
                     <CardHeader>
-                        <CardTitle className="text-4xl font-black text-primary">Fim de Jogo!</CardTitle>
+                        <CardTitle className="text-4xl font-black text-primary select-none">Fim de Jogo!</CardTitle>
                     </CardHeader>
                     <CardContent className="flex flex-col items-center gap-4">
                         <Trophy className="h-24 w-24 text-primary" />
-                        <p className={cn("text-2xl font-bold", winner === 'A' ? 'text-team-a-fg' : 'text-team-b-fg')}>
+                        <p className={cn("text-2xl font-bold select-none", winner === 'A' ? 'text-team-a-fg' : 'text-team-b-fg')}>
                             {winner === 'A' ? state.teamAName : state.teamBName} venceu a partida!
                         </p>
-                        <p className="text-lg text-muted-foreground">
+                        <p className="text-lg text-muted-foreground select-none">
                             Placar final: {teamASetsWon} - {teamBSetsWon}
                         </p>
                     </CardContent>
@@ -280,12 +280,12 @@ export default function VolleyCounter() {
             <div className="order-first flex w-full flex-col md:order-none md:w-[20%]">
                 <Card className="flex h-full w-full flex-col items-stretch text-center shadow-lg">
                     <CardHeader className="p-4">
-                        <CardDescription className="uppercase tracking-widest">Set</CardDescription>
-                        <CardTitle className="font-black text-5xl">{state.currentSet}</CardTitle>
+                        <CardDescription className="uppercase tracking-widest select-none">Set</CardDescription>
+                        <CardTitle className="font-black text-5xl select-none">{state.currentSet}</CardTitle>
                     </CardHeader>
                     <CardContent className="flex flex-col items-center justify-center gap-4 p-4">
                     <div className="flex flex-wrap items-center justify-center gap-2">
-                        <div className="font-mono text-2xl font-bold" aria-label="Cronômetro da Partida">{formatTime(seconds)}</div>
+                        <div className="font-mono text-2xl font-bold select-none" aria-label="Cronômetro da Partida">{formatTime(seconds)}</div>
                         <Button
                         variant="ghost"
                         size="icon"
@@ -318,8 +318,8 @@ export default function VolleyCounter() {
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                             <AlertDialogHeader>
-                            <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
-                            <AlertDialogDescription>
+                            <AlertDialogTitle className="select-none">Você tem certeza?</AlertDialogTitle>
+                            <AlertDialogDescription className="select-none">
                                 Isso irá resetar a partida inteira, incluindo todos os placares, nomes dos times e o cronômetro. Esta ação não pode ser desfeita.
                             </AlertDialogDescription>
                             </AlertDialogHeader>
@@ -340,13 +340,13 @@ export default function VolleyCounter() {
                         <>
                             <div className="h-[1px] bg-border mx-4" />
                             <CardHeader className="p-4 pb-2">
-                                <CardTitle>Histórico</CardTitle>
+                                <CardTitle className="select-none">Histórico</CardTitle>
                             </CardHeader>
                             <CardContent className="min-h-0 flex-1 space-y-2 overflow-y-auto p-4 pt-0">
                                 {state.sets.map((set, index) => (
                                     <div key={index} className="flex items-center justify-between rounded-md bg-muted/50 p-2">
-                                        <div className="font-semibold">Set {index + 1}</div>
-                                        <div className="flex items-center gap-2 text-lg">
+                                        <div className="font-semibold select-none">Set {index + 1}</div>
+                                        <div className="flex items-center gap-2 text-lg select-none">
                                             <span className={cn("font-bold", set.winner === 'A' ? "text-primary" : "text-team-a-fg")}>{set.teamAScore}</span>
                                             <span className="text-muted-foreground">-</span>
                                             <span className={cn("font-bold", set.winner === 'B' ? "text-primary" : "text-team-b-fg")}>{set.teamBScore}</span>
