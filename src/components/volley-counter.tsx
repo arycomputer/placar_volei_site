@@ -153,21 +153,36 @@ export default function VolleyCounter() {
         };
     }, []);
 
-  const handleScoreChange = useCallback((team: 'A' | 'B', delta: number) => {
-    if (isMatchOver || isSetOver) return;
-
-    setMatchState((prev) => {
-      const currentScore = team === 'A' ? prev.teamAScore : prev.teamBScore;
-      if (currentScore + delta < 0) return prev;
-      return {
-        ...prev,
-        [team === 'A' ? 'teamAScore' : 'teamBScore']: currentScore + delta,
-      };
-    });
-
-    setAnimatedScore(team);
-    setTimeout(() => setAnimatedScore(null), 300);
-  }, [isMatchOver, isSetOver, setMatchState]);
+    const handleScoreChange = useCallback((team: 'A' | 'B', delta: number) => {
+      setMatchState((prev) => {
+        const { teamAScore, teamBScore, currentSet, sets } = prev;
+        
+        const pointsToWin = currentSet === (SETS_TO_WIN * 2 - 1) ? settings.tieBreakPoints : settings.pointsToWin;
+        const teamAWinsSet = teamAScore >= pointsToWin && teamAScore >= teamBScore + 2;
+        const teamBWinsSet = teamBScore >= pointsToWin && teamBScore >= teamAScore + 2;
+        const isSetOver = teamAWinsSet || teamBWinsSet;
+  
+        const teamASetsWon = sets.filter(s => s.winner === 'A').length;
+        const teamBSetsWon = sets.filter(s => s.winner === 'B').length;
+        const isMatchOver = teamASetsWon === SETS_TO_WIN || teamBSetsWon === SETS_TO_WIN;
+  
+        if (isMatchOver || isSetOver) {
+          return prev;
+        }
+  
+        const currentScore = team === 'A' ? teamAScore : teamBScore;
+        if (currentScore + delta < 0) {
+          return prev;
+        }
+        return {
+          ...prev,
+          [team === 'A' ? 'teamAScore' : 'teamBScore']: currentScore + delta,
+        };
+      });
+  
+      setAnimatedScore(team);
+      setTimeout(() => setAnimatedScore(null), 300);
+    }, [setMatchState, settings.pointsToWin, settings.tieBreakPoints]);
 
   useEffect(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
