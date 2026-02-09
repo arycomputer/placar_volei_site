@@ -55,9 +55,9 @@ interface SpeechRecognition {
   lang: string;
   continuous: boolean;
   interimResults: boolean;
-  onresult: (event: any) => void;
-  onerror: (event: any) => void;
-  onend: () => void;
+  onresult: ((event: any) => void) | null;
+  onerror: ((event: any) => void) | null;
+  onend: (() => void) | null;
   start: () => void;
   stop: () => void;
 }
