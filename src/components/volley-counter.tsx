@@ -50,6 +50,18 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 
+// Type definition for the SpeechRecognition API
+interface SpeechRecognition {
+  lang: string;
+  continuous: boolean;
+  interimResults: boolean;
+  onresult: (event: any) => void;
+  onerror: (event: any) => void;
+  onend: () => void;
+  start: () => void;
+  stop: () => void;
+}
+
 type SetScore = { teamAScore: number; teamBScore: number; winner?: 'A' | 'B' };
 
 type MatchState = {
@@ -186,12 +198,12 @@ export default function VolleyCounter() {
     }, [setMatchState, settings.pointsToWin, settings.tieBreakPoints]);
 
   useEffect(() => {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) {
       return; 
     }
 
-    const recognition = new SpeechRecognition();
+    const recognition: SpeechRecognition = new SpeechRecognition();
     recognition.lang = 'pt-BR';
     recognition.continuous = false; // Process one result at a time
     recognition.interimResults = false;
