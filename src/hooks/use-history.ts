@@ -12,7 +12,7 @@ type History<T> = {
 type Action<T> =
   | { type: 'UNDO' }
   | { type: 'REDO' }
-  | { type: 'SET'; newPresent: T }
+  | { type: 'SET'; newPresent: T | ((currentState: T) => T) }
   | { type: 'RESET'; newPresent: T };
 
 const reducer = <T>(state: History<T>, action: Action<T>): History<T> => {
@@ -40,8 +40,13 @@ const reducer = <T>(state: History<T>, action: Action<T>): History<T> => {
       };
     }
     case 'SET': {
-      const { newPresent } = action;
+      const newPresent =
+        typeof action.newPresent === 'function'
+          ? (action.newPresent as (currentState: T) => T)(present)
+          : action.newPresent;
+
       if (newPresent === present) return state;
+      
       return {
         past: [...past, present],
         present: newPresent,
@@ -80,12 +85,8 @@ export const useHistory = <T>(initialPresent: T) => {
   const redo = React.useCallback(() => dispatch({ type: 'REDO' }), []);
 
   const set = React.useCallback((newPresent: T | ((currentState: T) => T)) => {
-    const newPresentValue =
-      typeof newPresent === 'function'
-        ? (newPresent as (currentState: T) => T)(state.present)
-        : newPresent;
-    dispatch({ type: 'SET', newPresent: newPresentValue });
-  }, [state.present]);
+    dispatch({ type: 'SET', newPresent });
+  }, []);
 
   const reset = React.useCallback((newPresent: T) => {
     dispatch({ type: 'RESET', newPresent });
