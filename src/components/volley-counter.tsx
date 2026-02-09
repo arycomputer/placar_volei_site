@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
@@ -23,6 +24,8 @@ import {
   Settings,
   HelpCircle,
   Mic,
+  Expand,
+  Minimize,
 } from 'lucide-react';
 import { useHistory } from '@/hooks/use-history';
 import { cn } from '@/lib/utils';
@@ -93,6 +96,7 @@ export default function VolleyCounter() {
   const [isTimerActive, setIsTimerActive] = useState(false);
   const [animatedScore, setAnimatedScore] = useState<'A' | 'B' | null>(null);
   const [isListening, setIsListening] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const { toast } = useToast();
 
@@ -136,6 +140,18 @@ export default function VolleyCounter() {
           setIsTimerActive(false);
       }
   }, [isSetOver]);
+
+    useEffect(() => {
+        const handleFullscreenChange = () => {
+            setIsFullscreen(!!document.fullscreenElement);
+        };
+
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+
+        return () => {
+            document.removeEventListener('fullscreenchange', handleFullscreenChange);
+        };
+    }, []);
 
   const handleScoreChange = useCallback((team: 'A' | 'B', delta: number) => {
     if (isMatchOver || isSetOver) return;
@@ -239,6 +255,22 @@ export default function VolleyCounter() {
       }
       return nextState;
     });
+  };
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch((err) => {
+            toast({
+                variant: "destructive",
+                title: "Não foi possível entrar em tela cheia",
+                description: `Seu navegador pode não suportar esta funcionalidade ou a permissão foi negada.`,
+            });
+        });
+    } else {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        }
+    }
   };
 
   const handleFinishSet = useCallback(() => {
@@ -376,12 +408,12 @@ export default function VolleyCounter() {
 
   return (
     <div className="flex flex-grow flex-col items-stretch">
-        <div className="grid w-full flex-grow grid-cols-5 items-stretch gap-2 p-2 md:gap-4 md:p-4 lg:gap-6 lg:p-8">
-            <div className="col-span-2 flex flex-col">
+        <div className="grid w-full flex-grow grid-cols-1 grid-rows-[1fr_auto] gap-2 p-2 md:grid-cols-5 md:grid-rows-1 md:gap-4 md:p-4 lg:gap-6 lg:p-8">
+            <div className="col-span-1 row-span-1 md:col-span-2">
                 <ScoreDisplay team="A" />
             </div>
             
-            <div className="col-span-1 flex flex-col">
+            <div className="col-span-1 row-span-1 md:col-span-1">
                 <Card className="flex h-full w-full flex-col items-stretch text-center shadow-lg">
                     <CardHeader className="p-4">
                         <CardDescription className="uppercase tracking-widest select-none">Set</CardDescription>
@@ -455,6 +487,21 @@ export default function VolleyCounter() {
                                         <Button
                                             variant="outline"
                                             size="icon"
+                                            onClick={toggleFullscreen}
+                                            aria-label={isFullscreen ? 'Sair da tela cheia' : 'Entrar em tela cheia'}
+                                        >
+                                            {isFullscreen ? <Minimize /> : <Expand />}
+                                        </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p className="select-none">{isFullscreen ? 'Sair da Tela Cheia' : 'Entrar em Tela Cheia'}</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <Button
+                                            variant="outline"
+                                            size="icon"
                                             onClick={toggleListening}
                                             aria-label={isListening ? 'Desativar comandos de voz' : 'Ativar comandos de voz'}
                                             className={cn(isListening && 'border-destructive text-destructive animate-pulse')}
@@ -503,10 +550,12 @@ export default function VolleyCounter() {
                 </Card>
             </div>
             
-            <div className="col-span-2 flex flex-col">
+            <div className="col-span-1 row-span-1 md:col-span-2">
                 <ScoreDisplay team="B" />
             </div>
         </div>
     </div>
   );
 }
+
+    
