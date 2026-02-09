@@ -227,7 +227,7 @@ export default function VolleyCounter() {
     recognition.continuous = false; 
     recognition.interimResults = false;
 
-    recognition.onresult = (event) => {
+    recognition.onresult = (event: any) => {
         if (isHandlingResult.current) return;
         isHandlingResult.current = true;
 
@@ -246,7 +246,7 @@ export default function VolleyCounter() {
         }
     };
 
-    recognition.onerror = (event) => {
+    recognition.onerror = (event: any) => {
         isHandlingResult.current = false;
         console.error('Speech recognition error', event.error);
         if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
@@ -604,5 +604,7 @@ export default function VolleyCounter() {
     </div>
   );
 }
+
+    
 
     
