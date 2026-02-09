@@ -111,6 +111,8 @@ export default function VolleyCounter() {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const isHandlingResult = useRef(false);
+  const isListeningRef = useRef(isListening);
+  isListeningRef.current = isListening;
   const { toast } = useToast();
 
   const { teamAWinsSet, teamBWinsSet, isSetOver } = useMemo(() => {
@@ -200,12 +202,29 @@ export default function VolleyCounter() {
   useEffect(() => {
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      return; 
+      if(isListening) {
+        toast({
+            variant: "destructive",
+            title: "Navegador incompatível",
+            description: "Seu navegador não suporta comandos de voz.",
+        });
+        setIsListening(false);
+      }
+      return;
     }
 
-    const recognition: SpeechRecognition = new SpeechRecognition();
+    if (!isListening) {
+        if (recognitionRef.current) {
+            recognitionRef.current.stop();
+        }
+        return;
+    }
+    
+    const recognition = recognitionRef.current || new SpeechRecognition();
+    recognitionRef.current = recognition;
+
     recognition.lang = 'pt-BR';
-    recognition.continuous = false; // Process one result at a time
+    recognition.continuous = false; 
     recognition.interimResults = false;
 
     recognition.onresult = (event) => {
@@ -242,9 +261,9 @@ export default function VolleyCounter() {
     
     recognition.onend = () => {
       isHandlingResult.current = false;
-      if (isListening) {
+      if (isListeningRef.current) {
         try {
-          recognition.start();
+          recognitionRef.current?.start();
         } catch (e) {
           console.error("Could not restart recognition", e);
           setIsListening(false);
@@ -252,7 +271,12 @@ export default function VolleyCounter() {
       }
     };
 
-    recognitionRef.current = recognition;
+    try {
+        recognition.start();
+    } catch(e) {
+        console.error("Speech recognition could not start", e);
+        setIsListening(false);
+    }
 
     return () => {
         if (recognitionRef.current) {
@@ -262,38 +286,21 @@ export default function VolleyCounter() {
             recognitionRef.current.stop();
         }
     };
-}, [handleScoreChange, isListening, toast]);
+}, [isListening, handleScoreChange, toast]);
 
 
   const toggleListening = () => {
-    const recognition = recognitionRef.current;
-    if (!recognition) {
-        toast({
-            variant: "destructive",
-            title: "Navegador incompatível",
-            description: "Seu navegador não suporta comandos de voz.",
-        });
-        return;
-    }
-
     setIsListening(prevState => {
-      const nextState = !prevState;
-      if (nextState) {
-        try {
-          recognition.start();
-          toast({
-            title: "Comandos de voz ativados!",
-            description: 'Diga "Casa ponto" ou "Visitante ponto".',
-          });
-        } catch (e) {
-          console.error("Speech recognition could not be started", e);
-          return false;
+        const nextState = !prevState;
+        if(nextState) {
+            toast({
+                title: "Comandos de voz ativados!",
+                description: 'Diga "Casa ponto" ou "Visitante ponto".',
+              });
+        } else {
+            toast({ title: "Comandos de voz desativados." });
         }
-      } else {
-        recognition.stop();
-        toast({ title: "Comandos de voz desativados." });
-      }
-      return nextState;
+        return nextState;
     });
   };
 
