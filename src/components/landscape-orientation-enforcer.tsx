@@ -8,20 +8,17 @@ export default function LandscapeOrientationEnforcer({ children }: { children: R
 
     useEffect(() => {
         const portraitMediaQuery = window.matchMedia("(orientation: portrait)");
-        const mobileMediaQuery = window.matchMedia("(max-width: 767px)");
 
         const handleMediaChange = () => {
-            setShowOverlay(mobileMediaQuery.matches && portraitMediaQuery.matches);
+            setShowOverlay(portraitMediaQuery.matches);
         };
 
         handleMediaChange();
 
         portraitMediaQuery.addEventListener("change", handleMediaChange);
-        mobileMediaQuery.addEventListener("change", handleMediaChange);
 
         return () => {
             portraitMediaQuery.removeEventListener("change", handleMediaChange);
-            mobileMediaQuery.removeEventListener("change", handleMediaChange);
         };
     }, []);
 
@@ -29,8 +26,8 @@ export default function LandscapeOrientationEnforcer({ children }: { children: R
         return (
             <div className="fixed inset-0 z-[101] flex h-screen w-screen flex-col items-center justify-center bg-background text-center text-foreground p-4">
                 <Smartphone className="h-16 w-16 mb-4 animate-pulse" />
-                <h1 className="text-2xl font-bold">Por Favor, Gire Seu Dispositivo</h1>
-                <p className="mt-2 text-muted-foreground">Esta aplicação é melhor visualizada no modo paisagem.</p>
+                <h1 className="text-2xl font-bold">Por Favor, Use o Modo Paisagem</h1>
+                <p className="mt-2 text-muted-foreground">Esta aplicação foi projetada para uma melhor experiência no modo paisagem.</p>
             </div>
         );
     }
