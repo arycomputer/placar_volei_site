@@ -98,6 +98,7 @@ export default function VolleyCounter() {
   const [isListening, setIsListening] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const isHandlingResult = useRef(false);
   const { toast } = useToast();
 
   const { teamAWinsSet, teamBWinsSet, isSetOver } = useMemo(() => {
@@ -192,21 +193,30 @@ export default function VolleyCounter() {
 
     const recognition = new SpeechRecognition();
     recognition.lang = 'pt-BR';
-    recognition.continuous = true;
+    recognition.continuous = false; // Process one result at a time
     recognition.interimResults = false;
 
     recognition.onresult = (event) => {
+        if (isHandlingResult.current) return;
+        isHandlingResult.current = true;
+
         const transcript = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
+        
+        toast({
+          title: "Comando recebido:",
+          description: `"${transcript}"`,
+          duration: 3000,
+        });
+
         if (transcript.includes('casa ponto')) {
             handleScoreChange('A', 1);
-            toast({ title: 'Ponto para Casa!' });
         } else if (transcript.includes('visitante ponto')) {
             handleScoreChange('B', 1);
-            toast({ title: 'Ponto para Visitante!' });
         }
     };
 
     recognition.onerror = (event) => {
+        isHandlingResult.current = false;
         console.error('Speech recognition error', event.error);
         if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
             setIsListening(false);
@@ -219,6 +229,7 @@ export default function VolleyCounter() {
     };
     
     recognition.onend = () => {
+      isHandlingResult.current = false;
       if (isListening) {
         try {
           recognition.start();
@@ -233,6 +244,8 @@ export default function VolleyCounter() {
 
     return () => {
         if (recognitionRef.current) {
+            recognitionRef.current.onresult = null;
+            recognitionRef.current.onerror = null;
             recognitionRef.current.onend = null;
             recognitionRef.current.stop();
         }
@@ -395,7 +408,7 @@ export default function VolleyCounter() {
   
   if (isMatchOver) {
     return (
-        <div className="flex flex-grow items-center justify-center">
+        <div className="flex h-screen flex-grow items-center justify-center overflow-hidden">
             <div className="mx-auto flex w-full max-w-4xl flex-col items-center gap-8 p-4 md:p-8">
                 <Card className="w-full animate-in fade-in zoom-in-95 p-8 text-center shadow-2xl">
                     <CardHeader>
@@ -422,7 +435,7 @@ export default function VolleyCounter() {
   }
 
   return (
-    <div className="flex flex-grow flex-col items-stretch">
+    <div className="h-screen flex flex-col items-stretch overflow-hidden">
         <div className="grid w-full flex-grow grid-cols-5 grid-rows-1 gap-2 p-2 md:gap-4 md:p-4 lg:gap-6 lg:p-8">
             <div className="col-span-2 row-span-1">
                 <ScoreDisplay team="A" />
@@ -543,7 +556,7 @@ export default function VolleyCounter() {
                         </div>
                     </CardContent>
                      {state.sets.length > 0 && (
-                        <>
+                        <div className='flex flex-col min-h-0'>
                             <div className="h-[1px] bg-border mx-4" />
                             <CardHeader className="p-4 pb-2">
                                 <CardTitle className="select-none">Histórico</CardTitle>
@@ -560,7 +573,7 @@ export default function VolleyCounter() {
                                     </div>
                                 ))}
                             </CardContent>
-                        </>
+                        </div>
                     )}
                 </Card>
             </div>
