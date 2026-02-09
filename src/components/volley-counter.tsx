@@ -408,12 +408,12 @@ export default function VolleyCounter() {
 
   return (
     <div className="flex flex-grow flex-col items-stretch">
-        <div className="grid w-full flex-grow grid-cols-1 grid-rows-[1fr_auto] gap-2 p-2 md:grid-cols-5 md:grid-rows-1 md:gap-4 md:p-4 lg:gap-6 lg:p-8">
-            <div className="col-span-1 row-span-1 md:col-span-2">
+        <div className="grid w-full flex-grow grid-cols-5 grid-rows-1 gap-2 p-2 md:gap-4 md:p-4 lg:gap-6 lg:p-8">
+            <div className="col-span-2 row-span-1">
                 <ScoreDisplay team="A" />
             </div>
             
-            <div className="col-span-1 row-span-1 md:col-span-1">
+            <div className="col-span-1 row-span-1">
                 <Card className="flex h-full w-full flex-col items-stretch text-center shadow-lg">
                     <CardHeader className="p-4">
                         <CardDescription className="uppercase tracking-widest select-none">Set</CardDescription>
@@ -550,7 +550,7 @@ export default function VolleyCounter() {
                 </Card>
             </div>
             
-            <div className="col-span-1 row-span-1 md:col-span-2">
+            <div className="col-span-2 row-span-1">
                 <ScoreDisplay team="B" />
             </div>
         </div>
