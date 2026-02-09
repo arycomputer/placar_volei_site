@@ -22,6 +22,7 @@ import {
   RotateCcw,
   Settings,
   HelpCircle,
+  Mic,
 } from 'lucide-react';
 import { useHistory } from '@/hooks/use-history';
 import { cn } from '@/lib/utils';
@@ -91,6 +92,8 @@ export default function VolleyCounter() {
   const [seconds, setSeconds] = useState(0);
   const [isTimerActive, setIsTimerActive] = useState(false);
   const [animatedScore, setAnimatedScore] = useState<'A' | 'B' | null>(null);
+  const [isListening, setIsListening] = useState(false);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
   const { toast } = useToast();
 
   const { teamAWinsSet, teamBWinsSet, isSetOver } = useMemo(() => {
@@ -134,6 +137,110 @@ export default function VolleyCounter() {
       }
   }, [isSetOver]);
 
+  const handleScoreChange = useCallback((team: 'A' | 'B', delta: number) => {
+    if (isMatchOver || isSetOver) return;
+
+    setMatchState((prev) => {
+      const currentScore = team === 'A' ? prev.teamAScore : prev.teamBScore;
+      if (currentScore + delta < 0) return prev;
+      return {
+        ...prev,
+        [team === 'A' ? 'teamAScore' : 'teamBScore']: currentScore + delta,
+      };
+    });
+
+    setAnimatedScore(team);
+    setTimeout(() => setAnimatedScore(null), 300);
+  }, [isMatchOver, isSetOver, setMatchState]);
+
+  useEffect(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      return; 
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'pt-BR';
+    recognition.continuous = true;
+    recognition.interimResults = false;
+
+    recognition.onresult = (event) => {
+        const transcript = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
+        if (transcript.includes('casa ponto')) {
+            handleScoreChange('A', 1);
+            toast({ title: 'Ponto para Casa!' });
+        } else if (transcript.includes('visitante ponto')) {
+            handleScoreChange('B', 1);
+            toast({ title: 'Ponto para Visitante!' });
+        }
+    };
+
+    recognition.onerror = (event) => {
+        console.error('Speech recognition error', event.error);
+        if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+            setIsListening(false);
+            toast({
+                variant: 'destructive',
+                title: 'Permissão para microfone negada.',
+                description: "Por favor, habilite o acesso ao microfone nas configurações do seu navegador."
+            });
+        }
+    };
+    
+    recognition.onend = () => {
+      if (isListening) {
+        try {
+          recognition.start();
+        } catch (e) {
+          console.error("Could not restart recognition", e);
+          setIsListening(false);
+        }
+      }
+    };
+
+    recognitionRef.current = recognition;
+
+    return () => {
+        if (recognitionRef.current) {
+            recognitionRef.current.onend = null;
+            recognitionRef.current.stop();
+        }
+    };
+}, [handleScoreChange, isListening, toast]);
+
+
+  const toggleListening = () => {
+    const recognition = recognitionRef.current;
+    if (!recognition) {
+        toast({
+            variant: "destructive",
+            title: "Navegador incompatível",
+            description: "Seu navegador não suporta comandos de voz.",
+        });
+        return;
+    }
+
+    setIsListening(prevState => {
+      const nextState = !prevState;
+      if (nextState) {
+        try {
+          recognition.start();
+          toast({
+            title: "Comandos de voz ativados!",
+            description: 'Diga "Casa ponto" ou "Visitante ponto".',
+          });
+        } catch (e) {
+          console.error("Speech recognition could not be started", e);
+          return false;
+        }
+      } else {
+        recognition.stop();
+        toast({ title: "Comandos de voz desativados." });
+      }
+      return nextState;
+    });
+  };
+
   const handleFinishSet = useCallback(() => {
     if (!isSetOver) return;
 
@@ -168,22 +275,6 @@ export default function VolleyCounter() {
       });
     }
   }, [prevIsSetOver, isSetOver, isMatchOver, teamAWinsSet, state.teamAName, state.teamBName, state.currentSet, toast, handleFinishSet]);
-
-  const handleScoreChange = (team: 'A' | 'B', delta: number) => {
-    if (isMatchOver || isSetOver) return;
-
-    setMatchState((prev) => {
-      const currentScore = team === 'A' ? prev.teamAScore : prev.teamBScore;
-      if (currentScore + delta < 0) return prev;
-      return {
-        ...prev,
-        [team === 'A' ? 'teamAScore' : 'teamBScore']: currentScore + delta,
-      };
-    });
-
-    setAnimatedScore(team);
-    setTimeout(() => setAnimatedScore(null), 300);
-  };
 
   const handleNameChange = (team: 'A' | 'B', name: string) => {
     setMatchState((prev) => ({
@@ -346,12 +437,35 @@ export default function VolleyCounter() {
                             </AlertDialog>
                         </div>
                         <div className="flex w-full items-center justify-center gap-2">
-                            <Button asChild variant="outline" size="icon" aria-label="Configurações">
-                            <Link href="/settings">
-                                <Settings />
-                            </Link>
-                            </Button>
                             <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <Button asChild variant="outline" size="icon" aria-label="Configurações">
+                                            <Link href="/settings">
+                                                <Settings />
+                                            </Link>
+                                        </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p className="select-none">Configurações</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <Button
+                                            variant="outline"
+                                            size="icon"
+                                            onClick={toggleListening}
+                                            aria-label={isListening ? 'Desativar comandos de voz' : 'Ativar comandos de voz'}
+                                            className={cn(isListening && 'border-destructive text-destructive animate-pulse')}
+                                        >
+                                            <Mic />
+                                        </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p className="select-none">Comandos de voz</p>
+                                    </TooltipContent>
+                                </Tooltip>
                                 <Tooltip>
                                     <TooltipTrigger asChild>
                                     <Button variant="ghost" size="icon" aria-label="Ajuda">
